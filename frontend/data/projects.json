@@ -1,0 +1,120 @@
+[
+  {
+    "id": "nike-ad",
+    "title": "Nike",
+    "logo": "/assets/images/brands/White-Nike-Logo-PNG.png",
+    "wall": "/assets/videos/motion-graphics/NIKE2.mp4",
+    "category": "video-editing",
+    "role": "3D Motion Graphics",
+    "client": "DAVRE Studio",
+    "year": 2026,
+    "tools": [
+      "Premiere Pro",
+      "DaVinci Resolve"
+    ],
+    "video": "/assets/videos/motion-graphics/NIKE.mp4"
+  },
+  {
+    "id": "the-wanderer",
+    "title": "Nescafe",
+    "category": "video-editing",
+    "role": "3D Motion Graphics",
+    "client": "Personal",
+    "year": 2026,
+    "tools": [
+      "Premiere Pro",
+      "After Effects"
+    ],
+    "video": "/assets/videos/motion-graphics/NESCAFE.mp4"
+  },
+  {
+    "id": "surreal-drift",
+    "title": "Glovo",
+    "category": "video-editing",
+    "role": "2D Motion graphics",
+    "client": "Personal",
+    "year": 2025,
+    "tools": [
+      "Final Cut",
+      "Audition"
+    ],
+    "video": "/assets/videos/motion-graphics/GLOVO.mp4"
+  },
+  {
+    "id": "pyro-title",
+    "title": "BATCAVE SCIENTIST OF THE MONTH",
+    "category": "motion-graphics",
+    "role": "Fashion Video",
+    "client": "DAVRE Studio",
+    "year": 2026,
+    "tools": [
+      "After Effects",
+      "Cinema 4D"
+    ],
+    "video": "/assets/videos/motion-graphics/final_2.mp4"
+  },
+  {
+    "id": "speed-sting",
+    "title": "MAD SCIENTIST OF THE MONTH",
+    "category": "motion-graphics",
+    "role": "Fashion Video",
+    "client": "Auto Brand",
+    "year": 2026,
+    "tools": [
+      "After Effects"
+    ],
+    "video": "/assets/videos/motion-graphics/BATCAVE%20-%20Trim.mp4"
+  },
+  {
+    "id": "adrenaline-loop",
+    "title": "UBER",
+    "category": "motion-graphics",
+    "role": "Creative Ad for UBER (Unofficial)",
+    "client": "Personal",
+    "year": 2025,
+    "tools": [
+      "Houdini",
+      "After Effects"
+    ],
+    "video": "/assets/videos/motion-graphics/UBER.mp4"
+  },
+  {
+    "id": "ai-dreamscape",
+    "title": "AI Dreamscape",
+    "category": "ai-creation",
+    "role": "AI Artist / Editor",
+    "client": "DAVRE Studio",
+    "year": 2026,
+    "tools": [
+      "Runway",
+      "Midjourney"
+    ],
+    "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+  },
+  {
+    "id": "generative-escape",
+    "title": "Generative Escape",
+    "category": "ai-creation",
+    "role": "AI Artist",
+    "client": "Personal",
+    "year": 2026,
+    "tools": [
+      "ComfyUI",
+      "After Effects"
+    ],
+    "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
+  },
+  {
+    "id": "synth-play",
+    "title": "Synthetic Play",
+    "category": "ai-creation",
+    "role": "AI Artist / Editor",
+    "client": "Personal",
+    "year": 2025,
+    "tools": [
+      "Runway",
+      "DaVinci"
+    ],
+    "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"
+  }
+]

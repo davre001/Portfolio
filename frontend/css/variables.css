@@ -1,0 +1,99 @@
+:root {
+  /* =====================================================
+     Color — deep cinematic base + neutral ramp
+     ===================================================== */
+  --color-bg: #0a0a0b;
+  --color-surface: #131316;
+  --color-surface-2: #181819;
+  --color-surface-3: #202022;
+  --color-text: #f4f4f2;
+  --color-muted: #9a9aa1;          /* AA on --color-bg */
+  --color-faint: #6a6a72;          /* decorative / disabled text */
+
+  /* Single restrained accent — off-white, never purple */
+  --color-accent: #f4f4f2;
+  --color-accent-2: #c7c7cd;
+
+  /* Semantic states (neutral-friendly) */
+  --color-danger: #ff7a7a;
+  --color-success: #8fe3b0;
+
+  /* Hairlines & borders (layered so surfaces separate cleanly) */
+  --line: rgba(255, 255, 255, 0.09);
+  --line-strong: rgba(255, 255, 255, 0.18);
+  --line-accent: rgba(255, 255, 255, 0.42);
+
+  /* Orb / glow accents — neutral light, no purple */
+  --orb-1: #ffffff;
+  --orb-2: #e8e8ec;
+  --orb-3: #d8d8de;
+  --glow: 0 0 42px rgba(255, 255, 255, 0.16);
+  --glow-2: 0 0 42px rgba(255, 255, 255, 0.12);
+  --focus-ring: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
+
+  /* =====================================================
+     Typography
+     ===================================================== */
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-nav: "Casthena", var(--font-display), system-ui, sans-serif;
+  /* About bio — thin, premium editorial serif (Cormorant Garamond, already
+     loaded in index.html at weight 300). Falls back through Inter/Georgia. */
+  --font-about: "Cormorant Garamond", var(--font-body), Georgia, serif;
+
+  /* Fluid type scale (modular, clamps to viewport) */
+  --fs-xs: 0.78rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-md: 1.0625rem;
+  --fs-lg: clamp(1.15rem, 1.5vw, 1.3rem);
+  --fs-xl: clamp(1.5rem, 2.6vw, 2rem);
+  --fs-2xl: clamp(1.9rem, 3.6vw, 2.8rem);
+  --fs-3xl: clamp(2.6rem, 5.4vw, 4.4rem);
+
+  /* =====================================================
+     Spacing — 4px base rhythm (legacy aliases retained)
+     ===================================================== */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+  --space-10: 4rem;
+  --space-12: 6rem;
+  --space-16: 8rem;
+
+  /* Legacy aliases (kept so existing rules keep working) */
+  --space-xs: var(--space-2);
+  --space-sm: var(--space-4);
+  --space-md: var(--space-6);
+  --space-lg: var(--space-10);
+  --space-xl: var(--space-16);
+
+  /* Fluid section rhythm */
+  --section-y: clamp(4.5rem, 10vw, 8rem);
+  --gutter: clamp(1.25rem, 5vw, 2.5rem);
+
+  /* =====================================================
+     Layout, radius, elevation, motion
+     ===================================================== */
+  --max-width: 1280px;
+  --radius-sm: 10px;
+  --radius: 14px;
+  --radius-lg: 24px;
+  --radius-full: 999px;
+
+  --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 12px 34px rgba(0, 0, 0, 0.45);
+  --shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+
+  /* Motion */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 140ms;
+  --dur: 260ms;
+  --dur-slow: 480ms;
+  --transition: var(--dur) var(--ease);   /* legacy alias */
+}

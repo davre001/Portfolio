@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ink Garden — ASCII-art photo effect (Canvas2D)</title>
+<link rel="stylesheet" href="lib/inkgarden.css" />
+</head>
+<body>
+<header class="topbar">
+  <h1>Ink&nbsp;Garden <span class="sub">ASCII-art photo effect · Canvas2D</span></h1>
+  <div class="topbar-actions">
+    <label class="btn">Load photo<input id="file" type="file" accept="image/*" hidden /></label>
+    <button id="playpause" class="btn">Pause</button>
+    <button id="save" class="btn">Save PNG</button>
+    <button id="reset" class="btn ghost">Reset</button>
+    <span id="src" class="src-tag">…</span>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="stage">
+    <div class="canvas-wrap">
+      <canvas id="view"></canvas>
+      <div id="drop" class="drop-hint">Drop an image to use it as the source photo</div>
+    </div>
+  </section>
+
+  <aside class="panel" id="panel">
+    <div class="panel-section">
+      <h2>Source</h2>
+      <label class="row"><span>Reference</span>
+        <select id="ref">
+          <option value="ref">ref-002.webp (if present)</option>
+          <option value="sample">Procedural ink-garden scene</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="panel-section">
+      <h2>Render</h2>
+      <label class="row"><span>renderMode</span><select id="renderMode"></select></label>
+      <label class="row"><span>cellSize</span><input id="cellSize" type="range" min="3" max="40" step="1"><output></output></label>
+      <label class="row"><span>coverage</span><input id="coverage" type="range" min="0" max="100" step="1"><output></output></label>
+      <label class="row"><span>density</span><input id="density" type="range" min="0" max="100" step="1"><output></output></label>
+      <label class="row"><span>edgeEmphasis</span><input id="edgeEmphasis" type="range" min="0" max="100" step="1"><output></output></label>
+      <label class="row checkbox"><input id="invert" type="checkbox"><span>invert</span></label>
+      <label class="row checkbox"><input id="dotGrid" type="checkbox"><span>dotGrid</span></label>
+    </div>
+
+    <div class="panel-section">
+      <h2>Characters</h2>
+      <label class="row"><span>charSet</span><select id="charSet"></select></label>
+      <label class="row"><span>customChars</span><input id="customChars" type="text" placeholder="e.g. .:-=+*#%@"></label>
+    </div>
+
+    <div class="panel-section">
+      <h2>Color</h2>
+      <label class="row"><span>brightness</span><input id="brightness" type="range" min="-100" max="100" step="1"><output></output></label>
+      <label class="row"><span>contrast</span><input id="contrast" type="range" min="0" max="250" step="1"><output></output></label>
+      <label class="row"><span>saturation</span><input id="saturation" type="range" min="0" max="200" step="1"><output></output></label>
+      <label class="row"><span>grayscale</span><input id="grayscale" type="range" min="0" max="100" step="1"><output></output></label>
+      <label class="row"><span>tint</span><input id="tint" type="color"><input id="tintOpacity" type="range" min="0" max="100" step="1"><output></output></label>
+      <label class="row"><span>overlayBlend</span><select id="overlayBlend">
+        <option>multiply</option><option>overlay</option><option>screen</option><option>soft-light</option><option>tint</option>
+      </select></label>
+    </div>
+
+    <div class="panel-section">
+      <h2>Background</h2>
+      <label class="row"><span>bgMode</span><select id="bgMode">
+        <option value="none">none</option><option value="blur">blur</option><option value="color">color</option><option value="original">original</option>
+      </select></label>
+      <label class="row"><span>bgBlur</span><input id="bgBlur" type="range" min="0" max="40" step="1"><output></output></label>
+      <label class="row"><span>bgOpacity</span><input id="bgOpacity" type="range" min="0" max="100" step="1"><output></output></label>
+      <label class="row"><span>blurType</span><select id="blurType">
+        <option value="off">off</option><option value="box">box</option><option value="gaussian">gaussian</option>
+      </select></label>
+      <label class="row"><span>blurAmount</span><input id="blurAmount" type="range" min="0" max="100" step="1"><output></output></label>
+      <label class="row"><span>styleBlend</span><select id="styleBlend">
+        <option>source-over</option><option>lighter</option><option>screen</option><option>multiply</option><option>overlay</option>
+      </select></label>
+    </div>
+
+    <div class="panel-section">
+      <h2>Animation</h2>
+      <label class="row checkbox"><input id="animated" type="checkbox"><span>animated</span></label>
+      <label class="row"><span>animStyle</span><select id="animStyle">
+        <option>pulse</option><option>wave</option><option>shimmer</option><option>ripple</option><option>flicker</option>
+      </select></label>
+      <label class="row"><span>animSpeed</span><input id="animSpeed" type="range" min="0" max="100" step="1"><output></output></label>
+      <label class="row"><span>animIntensity</span><input id="animIntensity" type="range" min="0" max="100" step="1"><output></output></label>
+      <label class="row"><span>animRandomness</span><input id="animRandomness" type="range" min="0" max="100" step="1"><output></output></label>
+    </div>
+
+    <div class="panel-section">
+      <h2>Post-effects</h2>
+      <div id="pfx" class="pfx-grid"></div>
+    </div>
+
+    <div class="panel-section">
+      <h2>Lights</h2>
+      <label class="row checkbox"><input id="lightsOn" type="checkbox"><span>enable glow lights</span></label>
+      <label class="row"><span>add light at center</span><button id="addLight" class="btn ghost small">+ light</button></label>
+    </div>
+
+    <details class="panel-section">
+      <summary><h2>JSON</h2></summary>
+      <pre id="json" class="json"></pre>
+    </details>
+  </aside>
+</main>
+
+<script src="lib/inkgarden.js"></script>
+<script>
+(function () {
+  'use strict';
+  const canvas = document.getElementById('view');
+  const params = JSON.parse(JSON.stringify(window.InkGardenDefaults));
+  const ig = new window.InkGarden(canvas, { params, maxOut: 900, onFrame: updateJson });
+
+  // ---- build selects from known option sets ----
+  fillSelect('renderMode', ['characters','dither','mosaic','pixel','dots','cross','diamond','voxel','lego','mixed','lines','diagonal','braille','disco']);
+  fillSelect('charSet', Object.keys(window.InkGardenCharSets).concat(['custom']));
+
+  // build pfx toggles
+  const pfxWrap = document.getElementById('pfx');
+  Object.keys(params.pfx).forEach((key) => {
+    const row = document.createElement('div');
+    row.className = 'pfx-row';
+    row.innerHTML = `<label class="checkbox"><input type="checkbox" data-pfx="${key}"><span>${key}</span></label>
+      <input type="range" min="0" max="100" step="1" data-pfxint="${key}"><output></output>`;
+    pfxWrap.appendChild(row);
+  });
+
+  // ---- bind every simple control to params ----
+  bindRange('cellSize'); bindRange('coverage'); bindRange('density'); bindRange('edgeEmphasis');
+  bindRange('brightness'); bindRange('contrast'); bindRange('saturation'); bindRange('grayscale');
+  bindRange('bgBlur'); bindRange('bgOpacity'); bindRange('blurAmount');
+  bindRange('animSpeed', 'animSpeed'); bindRange('animIntensity', 'animIntensity'); bindRange('animRandomness', 'animRandomness');
+  bindSelect('renderMode'); bindSelect('charSet'); bindSelect('bgMode'); bindSelect('blurType');
+  bindSelect('styleBlend'); bindSelect('overlayBlend'); bindSelect('animStyle');
+  bindText('customChars'); bindColor('tint'); bindRange('tintOpacity');
+  bindCheck('invert'); bindCheck('dotGrid'); bindCheck('animated');
+
+  // pfx bindings
+  document.querySelectorAll('[data-pfx]').forEach((cb) => {
+    cb.addEventListener('input', () => { params.pfx[cb.dataset.pfx].enabled = cb.checked; sync(); });
+  });
+  document.querySelectorAll('[data-pfxint]').forEach((sl) => {
+    const out = sl.nextElementSibling;
+    const set = () => { params.pfx[sl.dataset.pfxint].intensity = +sl.value; out.textContent = sl.value; sync(); };
+    sl.addEventListener('input', set);
+  });
+
+  // lights
+  document.getElementById('lightsOn').addEventListener('change', (e) => { params.lights.enabled = e.target.checked; sync(); });
+  document.getElementById('addLight').addEventListener('click', () => {
+    params.lights.enabled = true;
+    params.lights.points.push({ x: 0.5, y: 0.5, radius: 0.25, intensity: 70, color: '#ffd9a0' });
+    document.getElementById('lightsOn').checked = true;
+    sync();
+  });
+
+  // ---- file / drag-drop ----
+  document.getElementById('file').addEventListener('change', (e) => loadFile(e.target.files[0]));
+  const drop = document.getElementById('drop');
+  const wrap = document.querySelector('.canvas-wrap');
+  ['dragenter','dragover'].forEach((ev) => wrap.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add('show'); }));
+  ['dragleave','drop'].forEach((ev) => wrap.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove('show'); }));
+  wrap.addEventListener('drop', (e) => { const f = e.dataTransfer.files[0]; if (f) loadFile(f); });
+
+  async function loadFile(file) {
+    if (!file) return;
+    const url = await new Promise((res) => { const r = new FileReader(); r.onload = () => res(r.result); r.readAsDataURL(file); });
+    const img = await loadImg(url);
+    ig.setImage(img);
+    document.getElementById('src').textContent = 'image: ' + file.name;
+    sync();
+  }
+
+  // ---- top bar buttons ----
+  const pp = document.getElementById('playpause');
+  pp.addEventListener('click', () => {
+    if (ig._raf) { ig.stop(); pp.textContent = 'Play'; }
+    else { ig.start(); pp.textContent = 'Pause'; }
+  });
+  document.getElementById('save').addEventListener('click', () => {
+    const a = document.createElement('a');
+    a.download = 'ink-garden.png';
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+  });
+  document.getElementById('reset').addEventListener('click', () => {
+    Object.assign(params, JSON.parse(JSON.stringify(window.InkGardenDefaults)));
+    reflectAll(); sync();
+  });
+
+  document.getElementById('ref').addEventListener('change', (e) => {
+    if (e.target.value === 'sample') { ig.generateSampleScene(7); document.getElementById('src').textContent = 'procedural scene'; }
+    else { boot(); }
+  });
+
+  // ---- boot ----
+  async function boot() {
+    const ok = await ig.loadReference('demos/generated/ref-002.webp');
+    document.getElementById('src').textContent = ok ? 'ref-029.webp' : 'procedural scene (ref missing)';
+    if (!ig._raf) { ig.start(); pp.textContent = 'Pause'; }
+  }
+
+  // ---- helpers ----
+  function fillSelect(id, opts) {
+    const el = document.getElementById(id);
+    opts.forEach((o) => { const op = document.createElement('option'); op.value = o; op.textContent = o; el.appendChild(op); });
+  }
+  function reflectAll() {
+    setVal('cellSize', params.cellSize); setVal('coverage', params.coverage); setVal('density', params.density);
+    setVal('edgeEmphasis', params.edgeEmphasis); setVal('brightness', params.brightness); setVal('contrast', params.contrast);
+    setVal('saturation', params.saturation); setVal('grayscale', params.grayscale); setVal('bgBlur', params.bgBlur);
+    setVal('bgOpacity', params.bgOpacity); setVal('blurAmount', params.blurAmount); setVal('tintOpacity', params.tintOpacity);
+    setSel('renderMode', params.renderMode); setSel('charSet', params.charSet); setSel('bgMode', params.bgMode);
+    setSel('blurType', params.blurType); setSel('styleBlend', params.styleBlend); setSel('overlayBlend', params.overlayBlend);
+    setSel('animStyle', params.animStyle); setVal('animSpeed', params.animSpeed.intensity); setVal('animIntensity', params.animIntensity.intensity);
+    setVal('animRandomness', params.animRandomness.intensity);
+    setText('customChars', params.customChars); setColor('tint', params.tint);
+    setCheck('invert', params.invert); setCheck('dotGrid', params.dotGrid); setCheck('animated', params.animated);
+    document.querySelectorAll('[data-pfx]').forEach((cb) => { cb.checked = params.pfx[cb.dataset.pfx].enabled; });
+    document.querySelectorAll('[data-pfxint]').forEach((sl) => { sl.value = params.pfx[sl.dataset.pfxint].intensity; sl.nextElementSibling.textContent = sl.value; });
+    document.getElementById('lightsOn').checked = params.lights.enabled;
+  }
+  function sync() { /* params already mutated in place; render loop picks them up */ }
+
+  function setVal(id, v) { const el = document.getElementById(id); el.value = v; const o = el.nextElementSibling; if (o && o.tagName === 'OUTPUT') o.textContent = v; }
+  function setSel(id, v) { document.getElementById(id).value = v; }
+  function setText(id, v) { document.getElementById(id).value = v; }
+  function setColor(id, v) { document.getElementById(id).value = v; }
+  function setCheck(id, v) { document.getElementById(id).checked = !!v; }
+
+  function bindRange(id, pfxKey) {
+    const el = document.getElementById(id);
+    const handler = () => {
+      const v = +el.value;
+      if (pfxKey) { params[pfxKey].intensity = v; params[pfxKey].enabled = v > 0 ? params[pfxKey].enabled : params[pfxKey].enabled; }
+      else params[id] = v;
+      const o = el.nextElementSibling; if (o && o.tagName === 'OUTPUT') o.textContent = v;
+      sync();
+    };
+    el.addEventListener('input', handler);
+  }
+  function bindSelect(id) { document.getElementById(id).addEventListener('change', (e) => { params[id] = e.target.value; sync(); }); }
+  function bindText(id) { document.getElementById(id).addEventListener('input', (e) => { params[id] = e.target.value; sync(); }); }
+  function bindColor(id) { document.getElementById(id).addEventListener('input', (e) => { params[id] = e.target.value; sync(); }); }
+  function bindCheck(id) { document.getElementById(id).addEventListener('change', (e) => { params[id] = e.target.checked; sync(); }); }
+
+  function loadImg(url) {
+    return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; });
+  }
+  function updateJson() {
+    const j = document.getElementById('json');
+    j.textContent = JSON.stringify(params, null, 1);
+  }
+
+  reflectAll();
+  boot();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,647 @@
+/* =====================================================================
+   MenuPreview — "broadcast monitor" at the bottom of the staggered menu.
+   All rules scoped under .mprev so nothing leaks into the rest of the site.
+   The panel it sits in is light (white/red theme), so the monitor is a hard
+   dark rectangle that reads as a screen embedded in the menu.
+
+   Scene switching: every scene is stacked in .mprev__frame and hidden by
+   default; the active one (selected by [data-scene]) fades in and un-pauses
+   its animations. Inactive scenes keep their animations paused to save cycles.
+   ===================================================================== */
+
+.mprev {
+  --mprev-accent: #ff3b30;
+  display: flex;
+  width: 100%;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* The screen itself — fills the whole menu box (edge to edge, full height) -- */
+.mprev__frame {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  overflow: hidden;
+  background: #050506;
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.9),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+  isolation: isolate;
+  opacity: 1;
+  transition: opacity 0.4s var(--ease, ease);
+}
+/* Nothing hovered → the monitor disappears entirely, leaving a clean panel. */
+.mprev[data-scene='idle'] .mprev__frame {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Every scene fills the frame, hidden until selected ---------------------- */
+.mprev__scene {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: scale(1.04);
+  transition: opacity 0.55s var(--ease, ease), transform 0.7s var(--ease, ease);
+  animation-play-state: paused !important;
+}
+.mprev__scene * {
+  animation-play-state: paused;
+}
+
+/* Reveal the scene matching the current channel -------------------------- */
+.mprev[data-scene='idle'] .mprev__scene--idle,
+.mprev[data-scene='space'] .mprev__scene--space,
+.mprev[data-scene='ai'] .mprev__scene--ai,
+.mprev[data-scene='tutorials'] .mprev__scene--tutorials {
+  opacity: 1;
+  transform: scale(1);
+}
+.mprev[data-scene='idle'] .mprev__scene--idle,
+.mprev[data-scene='idle'] .mprev__scene--idle *,
+.mprev[data-scene='space'] .mprev__scene--space,
+.mprev[data-scene='space'] .mprev__scene--space *,
+.mprev[data-scene='ai'] .mprev__scene--ai,
+.mprev[data-scene='ai'] .mprev__scene--ai *,
+.mprev[data-scene='tutorials'] .mprev__scene--tutorials,
+.mprev[data-scene='tutorials'] .mprev__scene--tutorials * {
+  animation-play-state: running !important;
+}
+
+/* ── Idle standby : black screen, NO SIGNAL + looping typewriter prompt ──── */
+.mprev__scene--idle {
+  background: #050506;
+}
+.mprev__standby {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  text-align: center;
+  padding: 1rem;
+}
+.mprev__standby-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--mprev-accent);
+  box-shadow: 0 0 10px var(--mprev-accent);
+  animation: mprev-blink 1.2s steps(1) infinite;
+}
+.mprev__nosignal {
+  font-family: var(--font-display, sans-serif);
+  font-weight: 700;
+  letter-spacing: 0.35em;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+  animation: mprev-flicker 3.2s steps(1) infinite;
+}
+@keyframes mprev-flicker {
+  0%, 46%, 52%, 100% { opacity: 0.92; }
+  48% { opacity: 0.2; }
+  50% { opacity: 0.95; }
+}
+/* Typewriter line — text is clipped by a width that steps open then closed,
+   looping forever; the caret blinks alongside. */
+.mprev__type {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-display, monospace);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mprev-accent);
+}
+.mprev__type-text {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 0;
+  animation: mprev-typewriter 6s steps(25, end) infinite;
+}
+.mprev__type-caret {
+  width: 2px;
+  height: 0.9em;
+  margin-left: 3px;
+  background: var(--mprev-accent);
+  animation: mprev-caret 0.7s steps(1) infinite;
+}
+@keyframes mprev-typewriter {
+  0% { width: 0; }
+  45% { width: var(--tw, 13.5em); }   /* fully typed, then hold */
+  70% { width: var(--tw, 13.5em); }
+  90% { width: 0; }                   /* erase */
+  100% { width: 0; }
+}
+@keyframes mprev-caret {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* ── OUTERSPACE : starfield, orbiting planets, comet ────────────────────── */
+.mprev__scene--space {
+  background:
+    radial-gradient(120% 90% at 78% 18%, #241535 0%, #0a0a16 55%, #050509 100%);
+}
+.mprev__stars,
+.mprev__stars--far {
+  position: absolute;
+  inset: -20%;
+  background-image:
+    radial-gradient(1.4px 1.4px at 20% 30%, #fff, transparent),
+    radial-gradient(1.2px 1.2px at 65% 15%, #fff, transparent),
+    radial-gradient(1.6px 1.6px at 40% 70%, #ffe9c7, transparent),
+    radial-gradient(1px 1px at 85% 55%, #fff, transparent),
+    radial-gradient(1.3px 1.3px at 12% 82%, #cfe6ff, transparent),
+    radial-gradient(1px 1px at 92% 88%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 55% 45%, #fff, transparent);
+  animation: mprev-drift 8s linear infinite;
+}
+.mprev__stars--far {
+  filter: blur(0.4px);
+  opacity: 0.5;
+  animation-duration: 16s;
+}
+@keyframes mprev-drift {
+  from { transform: translate3d(0, -20%, 0); }
+  to { transform: translate3d(0, 20%, 0); }
+}
+
+.mprev__planet {
+  position: absolute;
+  border-radius: 50%;
+  display: block;
+}
+/* A distant moon parked in the upper-right, gently drifting down as we climb */
+.mprev__planet--moon {
+  width: 20%;
+  aspect-ratio: 1;
+  right: 10%;
+  top: 12%;
+  background:
+    radial-gradient(circle at 34% 30%, #eef1f6 0%, #b9c0cc 46%, #7d8794 78%, #4a515c 100%);
+  box-shadow: inset -6px -5px 16px rgba(0, 0, 0, 0.55), 0 0 22px rgba(180, 200, 230, 0.18);
+  animation: mprev-moon 18s linear infinite;
+}
+.mprev__planet--moon::after {
+  /* a couple of craters */
+  content: '';
+  position: absolute;
+  top: 32%;
+  left: 40%;
+  width: 16%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.12);
+  box-shadow: 30% 120% 0 -2% rgba(0,0,0,.1);
+}
+@keyframes mprev-moon {
+  from { transform: translateY(-4%); }
+  to { transform: translateY(10%); }
+}
+
+/* Vertical warp streaks selling upward velocity */
+.mprev__streaks {
+  position: absolute;
+  inset: -20% 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.55), transparent),
+    linear-gradient(rgba(255, 220, 200, 0.4), transparent),
+    linear-gradient(rgba(200, 220, 255, 0.4), transparent),
+    linear-gradient(rgba(255, 255, 255, 0.35), transparent);
+  background-size: 2px 40px, 2px 60px, 2px 30px, 2px 50px;
+  background-repeat: repeat-y;
+  background-position: 22% 0, 46% 0, 68% 0, 86% 0;
+  opacity: 0.6;
+  animation: mprev-warp 0.6s linear infinite;
+}
+@keyframes mprev-warp {
+  from { background-position-y: 0, 0, 0, 0; }
+  to { background-position-y: 40px, 60px, 30px, 50px; }
+}
+
+/* Drifting asteroids (irregular rocks that tumble downward past the rocket) */
+.mprev__aster {
+  position: absolute;
+  display: block;
+  background: radial-gradient(circle at 35% 32%, #8a8a92 0%, #55555c 55%, #303036 100%);
+  border-radius: 46% 54% 58% 42% / 52% 46% 54% 48%;
+  box-shadow: inset -3px -2px 6px rgba(0, 0, 0, 0.6);
+}
+.mprev__aster--1 {
+  width: 22px; height: 18px;
+  left: 16%; top: -12%;
+  animation: mprev-fall 6.5s linear infinite;
+}
+.mprev__aster--2 {
+  width: 13px; height: 12px;
+  left: 74%; top: -20%;
+  animation: mprev-fall 5s linear infinite 1.4s;
+}
+.mprev__aster--3 {
+  width: 30px; height: 24px;
+  left: 52%; top: -30%;
+  animation: mprev-fall 8s linear infinite 2.6s;
+}
+@keyframes mprev-fall {
+  from { transform: translateY(0) rotate(0deg); }
+  to { transform: translateY(560%) rotate(200deg); }
+}
+
+/* The rocket — a flat 2D craft nose-up, bobbing on its thrust */
+.mprev__rocket {
+  position: absolute;
+  left: 50%;
+  bottom: 26%;
+  width: 46px;
+  height: 96px;
+  transform: translateX(-50%);
+  animation: mprev-bob 2.4s ease-in-out infinite;
+  z-index: 2;
+}
+.mprev__rocket-body {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 30px;
+  height: 68px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, #b9bcc4 0%, #fff 42%, #cfd2da 60%, #8f929b 100%);
+  /* nose-cone via a tall rounded top, flat bottom */
+  border-radius: 50% 50% 30% 30% / 60% 60% 12% 12%;
+  box-shadow: inset -3px 0 6px rgba(0, 0, 0, 0.25);
+}
+.mprev__rocket-window {
+  position: absolute;
+  left: 50%;
+  top: 26%;
+  width: 12px;
+  height: 12px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 34%, #cfe9ff 0%, #4f83c9 55%, #23406e 100%);
+  box-shadow: inset 0 0 0 2px #d33b30, 0 0 6px rgba(255, 59, 48, 0.5);
+}
+.mprev__rocket-fin {
+  position: absolute;
+  bottom: 20px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+.mprev__rocket-fin--l {
+  left: 2px;
+  border-width: 0 0 26px 14px;
+  border-color: transparent transparent #d33b30 transparent;
+}
+.mprev__rocket-fin--r {
+  right: 2px;
+  border-width: 0 14px 26px 0;
+  border-color: transparent transparent #d33b30 transparent;
+}
+/* Exhaust flame flickering under the rocket */
+.mprev__flame {
+  position: absolute;
+  left: 50%;
+  top: 62px;
+  width: 18px;
+  height: 30px;
+  transform: translateX(-50%);
+  background: radial-gradient(circle at 50% 20%, #fff 0%, #ffd24a 30%, #ff7a2e 60%, #ff3b30 85%, transparent 100%);
+  border-radius: 50% 50% 50% 50% / 30% 30% 100% 100%;
+  filter: blur(0.4px);
+  transform-origin: 50% 0;
+  animation: mprev-flame 0.18s steps(2) infinite;
+}
+@keyframes mprev-flame {
+  0% { transform: translateX(-50%) scaleY(1) scaleX(1); opacity: 0.95; }
+  100% { transform: translateX(-50%) scaleY(0.72) scaleX(1.15); opacity: 0.8; }
+}
+@keyframes mprev-bob {
+  0%, 100% { transform: translateX(-50%) translateY(0) rotate(-1.5deg); }
+  50% { transform: translateX(-50%) translateY(-6px) rotate(1.5deg); }
+}
+
+/* ── AI STUDIO : shuffling deck of cinematic frames ─────────────────────── */
+.mprev__scene--ai {
+  background: radial-gradient(120% 120% at 50% 20%, #16161c 0%, #050506 70%);
+}
+.mprev__deck {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+.mprev__card {
+  position: absolute;
+  width: 58%;
+  aspect-ratio: 16 / 10;
+  border-radius: 8px;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  transform-origin: center 130%;
+  animation: mprev-shuffle 9s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  animation-delay: calc(var(--i) * 1.8s);
+  opacity: 0;
+}
+/* Each card fans up from the deck, holds, then drops back */
+@keyframes mprev-shuffle {
+  0% { transform: translateY(24%) scale(0.82) rotate(-6deg); opacity: 0; }
+  8% { opacity: 1; }
+  16% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+  30% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+  40% { transform: translateY(-16%) scale(0.94) rotate(5deg); opacity: 0; }
+  100% { transform: translateY(-16%) scale(0.94) rotate(5deg); opacity: 0; }
+}
+/* A generative "scan beam" sweeping down, hinting at synthesis */
+.mprev__scanbeam {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(255, 59, 48, 0.12) 48%,
+    rgba(255, 120, 90, 0.5) 50%,
+    rgba(255, 59, 48, 0.12) 52%,
+    transparent 100%
+  );
+  mix-blend-mode: screen;
+  animation: mprev-scan 3.4s linear infinite;
+}
+@keyframes mprev-scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+/* ── TUTORIALS : player + scrubbing timeline + filmstrip ────────────────── */
+.mprev__scene--tutorials {
+  background: #0b0b0e;
+  display: flex;
+  flex-direction: column;
+}
+.mprev__player {
+  position: relative;
+  flex: 1;
+  background-size: cover;
+  background-position: center;
+}
+.mprev__player::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(60% 60% at 50% 45%, transparent 0%, rgba(0, 0, 0, 0.55) 100%);
+}
+.mprev__play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 46px;
+  height: 46px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.85);
+  z-index: 1;
+  animation: mprev-pulse 2s ease-in-out infinite;
+}
+.mprev__play::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 54%;
+  transform: translate(-50%, -50%);
+  border-style: solid;
+  border-width: 8px 0 8px 13px;
+  border-color: transparent transparent transparent #fff;
+}
+@keyframes mprev-pulse {
+  0%, 100% { box-shadow: inset 0 0 0 2px rgba(255,255,255,.85), 0 0 0 0 rgba(255,59,48,.5); }
+  50% { box-shadow: inset 0 0 0 2px rgba(255,255,255,.85), 0 0 0 10px rgba(255,59,48,0); }
+}
+/* Timeline scrubber */
+.mprev__timeline {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  bottom: 30%;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
+  z-index: 2;
+}
+.mprev__progress {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 40%;
+  border-radius: 999px;
+  background: var(--mprev-accent);
+  animation: mprev-scrub 4s ease-in-out infinite;
+}
+.mprev__playhead {
+  position: absolute;
+  top: 50%;
+  left: 40%;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #fff;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 6px rgba(255, 59, 48, 0.9);
+  animation: mprev-scrub 4s ease-in-out infinite;
+}
+@keyframes mprev-scrub {
+  0% { width: 8%; left: 8%; }
+  50% { width: 82%; left: 82%; }
+  100% { width: 8%; left: 8%; }
+}
+/* Scrolling filmstrip along the bottom */
+.mprev__strip {
+  display: flex;
+  gap: 4px;
+  height: 26%;
+  padding: 4px;
+  background: rgba(0, 0, 0, 0.5);
+  animation: mprev-roll 12s linear infinite;
+  width: max-content;
+}
+.mprev__strip span {
+  display: block;
+  height: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 3px;
+  background-size: cover;
+  background-position: center;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  flex: none;
+}
+@keyframes mprev-roll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ── Viewfinder chrome + CRT overlays (shared) ──────────────────────────── */
+.mprev__crt {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.16) 0px,
+    rgba(0, 0, 0, 0.16) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: multiply;
+  z-index: 5;
+}
+.mprev__vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(90% 90% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+  z-index: 5;
+}
+.mprev__bracket {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  z-index: 6;
+}
+.mprev__bracket--tl { top: 8px; left: 8px; border-right: 0; border-bottom: 0; }
+.mprev__bracket--tr { top: 8px; right: 8px; border-left: 0; border-bottom: 0; }
+.mprev__bracket--bl { bottom: 8px; left: 8px; border-right: 0; border-top: 0; }
+.mprev__bracket--br { bottom: 8px; right: 8px; border-left: 0; border-top: 0; }
+
+.mprev__hud {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-display, monospace);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  z-index: 6;
+}
+.mprev__hud--top { top: 12px; }
+.mprev__hud--bottom { bottom: 12px; }
+.mprev__rec {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.mprev__rec-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--mprev-accent);
+  box-shadow: 0 0 6px var(--mprev-accent);
+  animation: mprev-blink 1.2s steps(1) infinite;
+}
+@keyframes mprev-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0.15; }
+}
+.mprev__tc { font-variant-numeric: tabular-nums; }
+.mprev__chan {
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.45);
+  transition: color 0.3s ease;
+}
+.mprev[data-scene='space'] .mprev__chan,
+.mprev[data-scene='ai'] .mprev__chan,
+.mprev[data-scene='tutorials'] .mprev__chan {
+  color: #fff;
+}
+
+/* Caption now lives in the bottom HUD, opposite the channel id ----------- */
+.mprev__caption {
+  font-family: var(--font-display, sans-serif);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  transition: color 0.3s ease;
+}
+.mprev[data-scene='space'] .mprev__caption,
+.mprev[data-scene='ai'] .mprev__caption,
+.mprev[data-scene='tutorials'] .mprev__caption {
+  color: var(--mprev-accent);
+}
+
+/* Reduced motion : hold every scene still, keep the imagery legible ------ */
+@media (prefers-reduced-motion: reduce) {
+  .mprev__scene,
+  .mprev__scene * {
+    animation: none !important;
+    transition: opacity 0.2s linear !important;
+  }
+  .mprev__card {
+    position: relative;
+    opacity: 1;
+    transform: none;
+    width: 30%;
+    margin: 0 -6% 0 0;
+  }
+  /* Show the standby prompt fully typed, no cycling */
+  .mprev__type-text { width: auto !important; }
+  .mprev__deck { flex-wrap: wrap; gap: 4px; }
+}
+
+/* =====================================================================
+   Menu-item hover arrow — a red triangle that slides in and points at the
+   hovered/focused item. Lives here since menu-preview.css is already loaded
+   and both belong to the staggered-menu experience.
+   ===================================================================== */
+.sm-arrow {
+  flex: none;
+  align-self: center;
+  width: 0;
+  height: 0;
+  margin-right: 0;
+  border-style: solid;
+  /* right-pointing triangle */
+  border-width: 8px 0 8px 12px;
+  border-color: transparent transparent transparent var(--sm-accent, #ff3b30);
+  opacity: 0;
+  transform: translateX(-14px);
+  transition: opacity 0.28s var(--ease, ease), transform 0.28s var(--ease, ease),
+    margin-right 0.28s var(--ease, ease);
+  filter: drop-shadow(0 0 4px rgba(255, 59, 48, 0.5));
+}
+.group:hover .sm-arrow,
+.group:focus-visible .sm-arrow,
+.is-active .sm-arrow {
+  opacity: 1;
+  transform: translateX(0);
+  margin-right: 12px;
+  animation: sm-arrow-nudge 0.9s ease-in-out infinite;
+}
+/* current page: keep the label tinted red so the active item reads at a glance */
+.is-active .sm-panel-itemLabel {
+  color: var(--sm-accent, #ff3b30);
+}
+@keyframes sm-arrow-nudge {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(4px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sm-arrow { transition: opacity 0.2s linear; }
+  .group:hover .sm-arrow,
+  .group:focus-visible .sm-arrow,
+  .is-active .sm-arrow { animation: none; }
+}

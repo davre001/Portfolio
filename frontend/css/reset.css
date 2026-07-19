@@ -1,0 +1,46 @@
+/* Modern CSS reset.
+   NOTE: the entire reset lives in @layer base. Unlayered CSS outranks Tailwind's
+   @layer utilities regardless of specificity, so an unlayered rule that sets
+   padding/margin/color/font/etc. silently wipes the matching Tailwind utility.
+   That bit us twice: an unlayered `:where(*){padding:0}` zeroed every p-/m-
+   utility (the staggered menu's pt-32 collapsed, dropping items onto the close
+   button), and an unlayered `button{color:inherit}` overrode the close button's
+   text-black utility, leaving it white. Wrapping the reset in @layer base keeps
+   it below the utilities layer so utilities always win. */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+  :where(*) { margin: 0; padding: 0; }
+
+  html, body { height: 100%; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body {
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  img, picture, video, canvas, svg { display: block; max-width: 100%; }
+  input, button, textarea, select { font: inherit; color: inherit; }
+  button { background: none; border: 0; cursor: pointer; }
+  p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+  a { color: inherit; text-decoration: none; }
+  ul, ol { list-style: none; }
+
+  /* Selection + accessible baseline focus (skill non-negotiable) */
+  ::selection { background: var(--accent); color: var(--accent-foreground); }
+
+  :where(a, button, input, textarea, select, [tabindex]):focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+    border-radius: var(--radius-sm);
+  }
+
+  /* Roomy, styled scrollbar to match the dark theme */
+  * { scrollbar-width: thin; scrollbar-color: #2a2a34 transparent; }
+  ::-webkit-scrollbar { width: 12px; height: 12px; }
+  ::-webkit-scrollbar-thumb {
+    background: #24242e; border: 3px solid var(--color-bg); border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: #33333f; }
+}

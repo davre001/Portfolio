@@ -1,0 +1,186 @@
+/* ===================================================================
+   /tutorials — "coming soon" page
+
+   A full-bleed looping video plays behind a film-grain overlay; a single
+   premium serif line sits centered over a readability scrim. The Davre nav
+   logo routes home.
+   =================================================================== */
+.tutorials {
+  --tut-accent: #ff3b30;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ---------------- full-bleed video + grain ---------------- */
+.tutorials__media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+.tutorials__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* darken + focus the video so the text reads cleanly */
+.tutorials__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 55% at 50% 52%, rgba(10, 10, 11, 0.72), rgba(10, 10, 11, 0.42) 60%, rgba(10, 10, 11, 0.72) 100%),
+    linear-gradient(to bottom, rgba(10, 10, 11, 0.55), rgba(10, 10, 11, 0.2) 30%, rgba(10, 10, 11, 0.2) 70%, rgba(10, 10, 11, 0.6));
+}
+
+/* ---------------- centered content ---------------- */
+.tutorials__inner {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding-block: var(--space-6);
+  max-width: 600px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.tutorials__tagline {
+  margin: 0 0 2.4rem;
+  font-family: var(--font-about, "Cormorant Garamond", Georgia, serif);
+  font-weight: 500;
+  font-size: clamp(2.2rem, 6vw, 4.6rem);
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  color: var(--color-text, #f4f4f2);
+  text-shadow: 0 2px 40px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+}
+.tutorials__tagline-em {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--tut-accent);
+  text-shadow: 0 0 30px rgba(255, 59, 48, 0.4);
+}
+
+/* ---------------- waitlist form ---------------- */
+.tutorials__waitlist {
+  margin-top: 3rem;
+}
+.tutorials__waitlist-box {
+  position: relative;
+  max-width: 420px;
+  margin: 0 auto 1rem;
+  background: rgba(244, 244, 242, 0.95);
+  border: 1px solid rgba(244, 244, 242, 0.3);
+  border-radius: 48px;
+  padding: 0.4rem;
+  padding-right: 0.4rem;
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.24s ease;
+}
+.tutorials__waitlist-box:focus-within {
+  border-color: rgba(244, 244, 242, 0.5);
+  background: rgba(244, 244, 242, 1);
+  box-shadow: 0 0 0 3px rgba(244, 244, 242, 0.2);
+}
+.tutorials__waitlist-input {
+  flex: 1;
+  padding: 0.9rem 1.6rem;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #0a0a0b;
+  background: transparent;
+  border: none;
+  outline: none;
+  border-radius: 48px;
+}
+.tutorials__waitlist-input::placeholder {
+  color: rgba(10, 10, 11, 0.4);
+}
+.tutorials__waitlist-input:-webkit-autofill,
+.tutorials__waitlist-input:-webkit-autofill:hover,
+.tutorials__waitlist-input:-webkit-autofill:focus,
+.tutorials__waitlist-input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px rgba(244, 244, 242, 0.95) inset !important;
+  -webkit-text-fill-color: #0a0a0b !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+.tutorials__waitlist-btn {
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  background: #0a0a0b;
+  border: 1px solid #0a0a0b;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  flex-shrink: 0;
+}
+.tutorials__waitlist-btn:hover,
+.tutorials__waitlist-btn:focus-visible {
+  background: #1a1a1b;
+  border-color: #1a1a1b;
+  transform: scale(1.08);
+  box-shadow: 0 4px 24px rgba(10, 10, 11, 0.4);
+}
+.tutorials__waitlist-arrow {
+  width: 22px;
+  height: 22px;
+  color: #f4f4f2;
+  transition: transform 0.3s ease;
+}
+.tutorials__waitlist-btn:hover .tutorials__waitlist-arrow {
+  transform: translateX(2px);
+}
+.tutorials__waitlist-helper {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 300;
+  line-height: 1.5;
+  color: rgba(244, 244, 242, 0.6);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* ---------------- success state ---------------- */
+.tutorials__waitlist-success-wrapper {
+  margin-top: 3rem;
+  width: 100%;
+  max-width: 520px;
+  animation: successFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes successFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+.tutorials__waitlist-success-alert {
+  backdrop-filter: blur(16px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* ---------------- responsive adjustments ---------------- */
+@media (max-width: 600px) {
+  .tutorials__waitlist-box {
+    max-width: 100%;
+  }
+}

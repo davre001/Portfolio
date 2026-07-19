@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="DAVRE — portfolio of a video editor, motion designer & AI creator." />
+
+    <meta property="og:title" content="DAVRE — Video / Motion / AI" />
+    <meta property="og:description" content="Video editing, motion graphics, and AI-generated creative work." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/assets/images/hero/og-cover.png" />
+
+    <link rel="icon" type="image/png" href="/davre-logo.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Google+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Oswald:wght@200;300;400;500;600;700&family=Poppins:wght@200;300;400&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <title>Davre Studios</title>
+    <!-- SPA deep-link restore: decode the path that 404.html encoded into the
+         query string (GitHub Pages has no server rewrites) back into a clean
+         URL before React mounts. Pairs with public/404.html. -->
+    <script>
+      (function () {
+        var l = window.location;
+        if (l.search[1] === '/') {
+          var decoded = l.search
+            .slice(1)
+            .split('&')
+            .map(function (s) { return s.replace(/~and~/g, '&'); })
+            .join('?');
+          window.history.replaceState(null, null, l.pathname.slice(0, -1) + decoded + l.hash);
+        }
+      })();
+    </script>
+    <style>
+      /* Instant boot splash shown before the JS bundle mounts React.
+         Keeps the screen from being blank during the initial load. */
+      .boot-loader {
+        position: fixed; inset: 0; z-index: 9999;
+        display: flex; align-items: center; justify-content: center;
+        background: #0a0a0b;
+      }
+      .boot-loader__dot {
+        width: 14px; height: 14px; border-radius: 50%;
+        background: #f4f4f2;
+        animation: bootPulse 1s ease-in-out infinite;
+      }
+      @keyframes bootPulse {
+        0%, 100% { opacity: 0.25; transform: scale(0.8); }
+        50% { opacity: 1; transform: scale(1); }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div class="boot-loader" aria-hidden="true">
+        <span class="boot-loader__dot"></span>
+      </div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

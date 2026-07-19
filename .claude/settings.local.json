@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(& 'c:\\\\Users\\\\USER\\\\OneDrive\\\\Documents\\\\Portfolio\\\\stop_frontend.ps1')",
+      "Bash(npm run *)",
+      "Bash(cp \"C:\\\\Users\\\\USER\\\\AppData\\\\Local\\\\Temp\\\\verify-nav.mjs\" \"C:\\\\Users\\\\USER\\\\OneDrive\\\\Documents\\\\Portfolio\\\\frontend\\\\verify-nav.mjs\")",
+      "Bash(node verify-nav.mjs)",
+      "Bash(npx playwright *)",
+      "Bash(pkill -f \"vite preview\")",
+      "Bash(nohup npx vite preview --port 4317 --host 127.0.0.1)",
+      "Bash(echo \"started pid $!\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:4317/)",
+      "Bash(awk '{print $5, $9}')"
+    ]
+  }
+}

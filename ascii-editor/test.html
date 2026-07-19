@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Ink Garden — headless test harness</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #05070a; overflow: hidden; }
+  #view { display: block; width: 100vw; height: 100vh; }
+</style>
+</head>
+<body>
+<canvas id="view"></canvas>
+<script src="lib/inkgarden.js"></script>
+<script>
+(function () {
+  const q = new URLSearchParams(location.search);
+  const params = JSON.parse(JSON.stringify(window.InkGardenDefaults));
+
+  // override any top-level param from the query string
+  for (const k of Object.keys(params)) {
+    if (q.has(k)) {
+      const v = q.get(k);
+      params[k] = (v === 'true') ? true : (v === 'false') ? false : (isNaN(+v) ? v : +v);
+    }
+  }
+  // pfx overrides like ?bloom=40 -> {enabled:true, intensity:40}
+  for (const k of Object.keys(params.pfx)) {
+    if (q.has(k)) { params.pfx[k].enabled = true; params.pfx[k].intensity = +q.get(k); }
+  }
+
+  const canvas = document.getElementById('view');
+  const ig = new window.InkGarden(canvas, { params, maxOut: 900 });
+
+  const useSample = q.get('src') === 'sample';
+  (useSample ? Promise.resolve() : ig.loadReference('demos/generated/ref-029.webp').then((ok) => {
+    window.__src = ok ? 'ref-029.webp' : 'sample';
+  })).then(() => {
+    if (useSample) { ig.generateSampleScene(7); window.__src = 'sample'; }
+    // render a couple frames so animation settles, then signal done
+    let n = 0;
+    const tick = (ts) => { ig.render(ts); if (++n < 3) requestAnimationFrame(tick); else window.__ready = true; };
+    requestAnimationFrame(tick);
+  });
+})();
+</script>
+</body>
+</html>

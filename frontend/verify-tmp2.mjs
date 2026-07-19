@@ -1,0 +1,14 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch({ args: ['--use-gl=angle','--use-angle=swiftshader','--enable-webgl','--ignore-gpu-blocklist'] });
+const p = await b.newPage({ viewport: { width: 1280, height: 900 } });
+const errs = [];
+p.on('console', m => { if (m.type() === 'error') errs.push(m.text()); });
+p.on('pageerror', e => errs.push('PAGEERROR: '+String(e)));
+await p.goto('http://127.0.0.1:5173/tutorials', { waitUntil: 'domcontentloaded' });
+await p.waitForTimeout(2500);
+console.log('body length:', (await p.content()).length);
+console.log('has .tutorials:', await p.$('.tutorials')?'yes':'no');
+console.log('has h1:', await p.$('h1')?'yes':'no');
+console.log('root innerHTML head:', (await p.$eval('#root', e=>e.innerHTML).catch(()=>'NO ROOT')).slice(0,300));
+console.log('errors:', errs.slice(0,8));
+await b.close();

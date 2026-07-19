@@ -1,0 +1,28 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });
+const p = await b.newPage({ viewport: { width: 1280, height: 900 } });
+const errs = [];
+p.on('console', m => { if (m.type() === 'error') errs.push(m.text()); });
+p.on('pageerror', e => errs.push('PAGEERROR: '+String(e)));
+await p.goto('http://127.0.0.1:5173/tutorials', { waitUntil: 'load' });
+await p.evaluate(() => document.fonts.ready);
+await p.waitForTimeout(2500);
+console.log('tagline:', JSON.stringify(await p.textContent('.tutorials__tagline').catch(()=>'ERR')));
+const em = await p.$eval('.tutorials__tagline-em', el => {
+  const s = getComputedStyle(el); return { text: el.textContent, style: s.fontStyle, fam: s.fontFamily.slice(0,22) };
+}).catch(e=>String(e));
+console.log('soon span:', JSON.stringify(em));
+const fam = await p.$eval('.tutorials__tagline', el => getComputedStyle(el).fontFamily.slice(0,26)).catch(()=>'ERR');
+console.log('tagline font:', fam);
+console.log('video present:', await p.$('.tutorials__video')?'yes':'no');
+console.log('noise present:', await p.$('.noise-overlay')?'yes':'no');
+const vt = await p.$eval('.tutorials__video', v => v.currentTime).catch(()=>'ERR');
+await p.waitForTimeout(600);
+const vt2 = await p.$eval('.tutorials__video', v => v.currentTime).catch(()=>'ERR');
+console.log('video playing:', vt, '->', vt2, vt2>vt);
+const client = await p.context().newCDPSession(p);
+const { data } = await client.send('Page.captureScreenshot', { format: 'png', fromSurface: true });
+const fs = await import('fs');
+fs.writeFileSync('shots/tut-video-noise.png', Buffer.from(data, 'base64'));
+console.log('errors:', errs.slice(0,6));
+await b.close();
