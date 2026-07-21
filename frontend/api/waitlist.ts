@@ -17,12 +17,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const { error } = await resend.emails.send({
       from: 'DAVRE Studios <onboarding@resend.dev>',
       to: email,
-      subject: "You're on the DAVRE Tutorials waitlist 🎉",
+      subject: "Thanks For Joining The waitlist 🎉",
       html: `
         <div style="font-family: Georgia, serif; max-width: 520px; margin: 0 auto; padding: 32px 24px; color: #0a0a0b;">
           <h1 style="font-size: 28px; font-weight: 500; margin: 0 0 16px;">You're on the list!</h1>
           <p style="font-size: 16px; line-height: 1.6; margin: 0 0 12px;">
-            Thanks for joining the DAVRE STUDIOS Tutorials waitlist. You'll be the first to know
+            Hey Fam, Congrats on joining the DAVRE STUDIOS Tutorials waitlist. You'll be the first to know
             the moment tutorials go live🚀.
           </p>
           <p style="font-size: 16px; line-height: 1.6; margin: 0 0 24px;">
