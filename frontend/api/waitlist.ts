@@ -28,7 +28,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     await transporter.sendMail({
-      from: `DAVRE Studios <${GMAIL_USER}>`,
+      from: `DAVRE STUDIOS <${GMAIL_USER}>`,
       to: email,
       subject: "Thanks For Joining The Waitlist 🎉",
       html: `
