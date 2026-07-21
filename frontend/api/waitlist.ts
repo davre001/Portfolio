@@ -1,11 +1,24 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const GMAIL_USER = process.env.GMAIL_USER;
+const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: GMAIL_USER,
+    pass: GMAIL_APP_PASSWORD,
+  },
+});
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  if (!GMAIL_USER || !GMAIL_APP_PASSWORD) {
+    return res.status(500).json({ error: 'Email service is not configured.' });
   }
 
   const { email } = req.body ?? {};
@@ -14,13 +27,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const { error } = await resend.emails.send({
-      from: 'DAVRE Studios <onboarding@resend.dev>',
+    await transporter.sendMail({
+      from: `DAVRE Studios <${GMAIL_USER}>`,
       to: email,
-      subject: "Thanks For Joining The waitlist 🎉",
+      subject: "Thanks For Joining The Waitlist 🎉",
       html: `
         <div style="font-family: Georgia, serif; max-width: 520px; margin: 0 auto; padding: 32px 24px; color: #0a0a0b;">
-          <h1 style="font-size: 28px; font-weight: 500; margin: 0 0 16px;">You're on the list!</h1>
+          <h1 style="font-size: 28px; font-weight: 500; margin: 0 0 16px;">YOU'RE IN!</h1>
           <p style="font-size: 16px; line-height: 1.6; margin: 0 0 12px;">
             Hey Fam, Congrats on joining the DAVRE STUDIOS Tutorials waitlist. You'll be the first to know
             the moment tutorials go live🚀.
@@ -33,12 +46,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       `,
     });
 
-    if (error) {
-      return res.status(502).json({ error: 'Could not send the confirmation email. Please try again.' });
-    }
-
     return res.status(200).json({ ok: true });
   } catch {
-    return res.status(500).json({ error: 'Something went wrong. Please try again.' });
+    return res.status(500).json({ error: 'Could not send the confirmation email. Please try again.' });
   }
 }
