@@ -20,6 +20,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-use-measure": "^2.1.7",
+    "resend": "^6.17.2",
     "tailwind-merge": "^3.6.0",
     "three": "^0.169.0"
   },
@@ -27,6 +28,7 @@
     "@tailwindcss/vite": "^4.3.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "@vercel/node": "^5.8.26",
     "@vitejs/plugin-react": "^4.3.4",
     "playwright": "^1.61.1",
     "tailwindcss": "^4.3.2",

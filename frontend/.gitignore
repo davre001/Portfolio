@@ -13,3 +13,6 @@ dist/
 # (uncomment if you want to exclude source footage)
 # assets/videos/**/*.mov
 # assets/videos/**/*.prproj
+
+.vercel
+.env*

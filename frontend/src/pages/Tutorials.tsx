@@ -11,16 +11,35 @@ import { CheckCircle2 } from 'lucide-react';
 export default function Tutorials() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) return;
-    // TODO: wire to a backend endpoint or service (e.g. Mailchimp, ConvertKit)
-    setSubmitted(true);
+    if (!email.trim() || sending) return;
+    setSending(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(data.error ?? 'Something went wrong. Please try again.');
+        return;
+      }
+      setSubmitted(true);
+    } catch {
+      setError('Network error. Please check your connection and try again.');
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -59,21 +78,29 @@ export default function Tutorials() {
                 type="submit"
                 className="tutorials__waitlist-btn"
                 aria-label="Join waitlist"
+                disabled={sending}
               >
-                <svg
-                  className="tutorials__waitlist-arrow"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
+                {sending ? (
+                  <span className="tutorials__waitlist-spinner" aria-hidden="true" />
+                ) : (
+                  <svg
+                    className="tutorials__waitlist-arrow"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                )}
               </button>
             </div>
+            {error && (
+              <p className="tutorials__waitlist-error" role="alert">{error}</p>
+            )}
             <p className="tutorials__waitlist-helper">
               Join the waitlist to get notified first when Tutorials are available.
             </p>
