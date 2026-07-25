@@ -42,6 +42,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (dbError.code === '23505') {
       return res.status(200).json({ ok: true, alreadyJoined: true });
     }
+    console.error('waitlist insert failed:', dbError.code, dbError.message, dbError.details);
     return res.status(500).json({ error: 'Could not save your signup. Please try again.' });
   }
 
