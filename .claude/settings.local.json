@@ -10,7 +10,9 @@
       "Bash(nohup npx vite preview --port 4317 --host 127.0.0.1)",
       "Bash(echo \"started pid $!\")",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:4317/)",
-      "Bash(awk '{print $5, $9}')"
+      "Bash(awk '{print $5, $9}')",
+      "Bash(node verify-mobile-overflow.mjs)",
+      "Bash(node verify-mobile-touch.mjs)"
     ]
   }
 }

@@ -57,6 +57,8 @@ function HeroTile({
   }, [reduce, videoSrc]);
 
   const onPointerDown = (e: PointerEvent<HTMLAnchorElement>) => {
+    // No drag on touch — let the page scroll; a tap still opens the project.
+    if (e.pointerType === 'touch') return;
     if (e.button !== 0) return;
     if (!tileRef.current?.closest('.hero__wall')) return;
     drag.current.active = true;

@@ -303,6 +303,9 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.06; letter-spacing
 }
 .hero__wall {
   position: relative; /* positioning context for tile offset + clamp math */
+  /* Off-screen title/role labels (translateX ±100%) must not widen the page;
+     clip only the x-axis so they still escape above/below their tile. */
+  overflow-x: clip;
   cursor: none; /* replaced by the custom plus/arrows cursor */
   display: grid; grid-template-columns: repeat(3, 1fr);
   column-gap: clamp(8px, 1vw, 16px);
@@ -311,7 +314,7 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.06; letter-spacing
 .htile {
   display: block;
   position: relative; margin: 0; aspect-ratio: 1 / 1;
-  background: var(--card); touch-action: none; /* let pointer-drag win over scroll */
+  background: var(--card); touch-action: pan-y; /* drag is mouse/pen only; touch scrolls the page */
   border: 1px solid var(--border); will-change: transform;
   transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
 }
