@@ -249,8 +249,17 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.06; letter-spacing
   left: 0; right: 0; bottom: 100%;
   height: 14px;
 }
-.nav__about:hover .nav__about-card,
-.nav__about:focus-within .nav__about-card {
+/* Hover/keyboard reveal only where a hover exists — on touch the tap-toggled
+   .is-open state drives it instead (focus-within would trap the card open). */
+@media (hover: hover) {
+  .nav__about:hover .nav__about-card,
+  .nav__about:focus-within .nav__about-card {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+}
+.nav__about.is-open .nav__about-card {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
@@ -309,7 +318,9 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.06; letter-spacing
   cursor: none; /* replaced by the custom plus/arrows cursor */
   display: grid; grid-template-columns: repeat(3, 1fr);
   column-gap: clamp(8px, 1vw, 16px);
-  row-gap: clamp(20px, 3vw, 40px);
+  /* Row gap must fit the hover-revealed title (~36px) / role (~29px) so they
+     land in the black space, never on a neighbouring video. */
+  row-gap: 40px;
 }
 .htile {
   display: block;
@@ -560,7 +571,19 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.06; letter-spacing
 }
 @media (max-width: 540px) {
   .hero { padding-top: var(--space-4); }
-  .hero__wall { grid-template-columns: 1fr; }
+  .hero__wall { grid-template-columns: 1fr; row-gap: 28px; }
+  /* No hover on phones — labels join the normal flow instead of hover-revealing:
+     title above the video, role below it, each in its own black space. */
+  .htile { aspect-ratio: auto; display: flex; flex-direction: column; }
+  .htile__media { position: relative; inset: auto; order: 2; aspect-ratio: 1 / 1; }
+  .htile__title {
+    position: static; order: 1; margin: 0 0 0.45rem;
+    opacity: 1; transform: none; transition: none;
+  }
+  .htile__role {
+    position: static; order: 3; margin: 0.45rem 0 0;
+    opacity: 1; transform: none; transition: none;
+  }
   .footer__bottom { flex-direction: column; align-items: flex-start; gap: 0.6rem; }
 }
 

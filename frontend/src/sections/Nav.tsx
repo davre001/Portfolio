@@ -17,6 +17,17 @@ const MENU_ITEMS = [
 
 export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
+  // Touch devices have no hover — a tap on About toggles the card instead of
+  // jumping to the #about section. Closed again by tapping anywhere outside.
+  const [aboutOpen, setAboutOpen] = useState(false);
+  useEffect(() => {
+    if (!aboutOpen) return;
+    const close = (e: Event) => {
+      if (!(e.target as Element | null)?.closest?.('.nav__about')) setAboutOpen(false);
+    };
+    document.addEventListener('pointerdown', close);
+    return () => document.removeEventListener('pointerdown', close);
+  }, [aboutOpen]);
   // Track the active route so the matching menu item shows its arrow indicator
   // before any hover. Subscribes to the same popstate the router uses.
   const [path, setPath] = useState(currentPath);
@@ -32,8 +43,19 @@ export default function Nav() {
     <header className="nav" id="nav">
       <div className="nav__inner nav__inner--full">
         {/* Left: About — also a hover/focus card trigger */}
-        <div className="nav__about">
-          <a href="#about" className="nav__btn nav__btn--right">
+        <div className={`nav__about${aboutOpen ? ' is-open' : ''}`}>
+          <a
+            href="#about"
+            className="nav__btn nav__btn--right"
+            aria-expanded={aboutOpen}
+            onClick={(e) => {
+              // No hover available → show the card in place of the anchor jump.
+              if (window.matchMedia('(hover: none)').matches) {
+                e.preventDefault();
+                setAboutOpen((o) => !o);
+              }
+            }}
+          >
             About
           </a>
 
