@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Noise from '../components/Noise';
 import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, MailCheck } from 'lucide-react';
 
 /**
  * /tutorials — "coming soon" page. A full-bleed looping video plays behind a
@@ -11,6 +11,7 @@ import { CheckCircle2 } from 'lucide-react';
 export default function Tutorials() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [alreadyJoined, setAlreadyJoined] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,6 +35,7 @@ export default function Tutorials() {
         setError(data.error ?? 'Something went wrong. Please try again.');
         return;
       }
+      setAlreadyJoined(Boolean(data.alreadyJoined));
       setSubmitted(true);
     } catch {
       setError('Network error. Please check your connection and try again.');
@@ -107,13 +109,23 @@ export default function Tutorials() {
           </form>
         ) : (
           <div className="tutorials__waitlist-success-wrapper">
-            <Alert variant="success" className="tutorials__waitlist-success-alert">
-              <CheckCircle2 className="size-4" />
-              <AlertTitle>You're on the list!</AlertTitle>
-              <AlertDescription>
-                We'll notify you when tutorials drop. Keep an eye on your inbox.
-              </AlertDescription>
-            </Alert>
+            {alreadyJoined ? (
+              <Alert variant="info" className="tutorials__waitlist-success-alert">
+                <MailCheck className="size-4" />
+                <AlertTitle>You have already joined the waitlist.</AlertTitle>
+                <AlertDescription>
+                  Check your mail for updates. Thank you!
+                </AlertDescription>
+              </Alert>
+            ) : (
+              <Alert variant="success" className="tutorials__waitlist-success-alert">
+                <CheckCircle2 className="size-4" />
+                <AlertTitle>You're on the list!</AlertTitle>
+                <AlertDescription>
+                  We'll notify you when tutorials drop. Keep an eye on your inbox.
+                </AlertDescription>
+              </Alert>
+            )}
           </div>
         )}
       </div>
