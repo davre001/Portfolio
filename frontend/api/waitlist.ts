@@ -4,7 +4,8 @@ import nodemailer from 'nodemailer';
 
 const GMAIL_USER = process.env.GMAIL_USER;
 const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
-const SUPABASE_URL = process.env.SUPABASE_URL;
+// Trailing slashes break PostgREST paths (PGRST125) — strip them defensively.
+const SUPABASE_URL = process.env.SUPABASE_URL?.trim().replace(/\/+$/, '');
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 const transporter = nodemailer.createTransport({
