@@ -4,9 +4,19 @@ import nodemailer from 'nodemailer';
 
 const GMAIL_USER = process.env.GMAIL_USER;
 const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
-// Trailing slashes break PostgREST paths (PGRST125) — strip them defensively.
-const SUPABASE_URL = process.env.SUPABASE_URL?.trim().replace(/\/+$/, '');
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+// The env var only needs the project origin (https://xxx.supabase.co).
+// Pasted values often carry quotes or a /rest/v1 path, which makes PostgREST
+// reject the request with PGRST125 — reduce whatever we get to its origin.
+const SUPABASE_URL = (() => {
+  const raw = process.env.SUPABASE_URL?.trim().replace(/^["']+|["']+$/g, '');
+  if (!raw) return undefined;
+  try {
+    return new URL(raw).origin;
+  } catch {
+    return undefined;
+  }
+})();
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim().replace(/^["']+|["']+$/g, '');
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -43,7 +53,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (dbError.code === '23505') {
       return res.status(200).json({ ok: true, alreadyJoined: true });
     }
-    console.error('waitlist insert failed:', dbError.code, dbError.message, dbError.details);
+    console.error('waitlist insert failed:', dbError.code, dbError.message, dbError.details, 'url:', SUPABASE_URL);
     return res.status(500).json({ error: 'Could not save your signup. Please try again.' });
   }
 
