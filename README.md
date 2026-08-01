@@ -1,4 +1,4 @@
-# Davre Portfolio
+# Davre Studio's Portfolio
 
 Personal portfolio of a video editor, motion designer & AI creator — showcasing reels, motion graphics, and AI-generated creative work.
 
