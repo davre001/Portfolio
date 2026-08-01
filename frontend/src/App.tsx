@@ -10,6 +10,7 @@ import Loader from './sections/Loader';
 import ProjectDetail from './sections/ProjectDetail';
 import ComingSoon from './pages/ComingSoon';
 import Tutorials from './pages/Tutorials';
+import SiteNotice from './components/SiteNotice';
 
 type Route =
   | { name: 'home' }
@@ -70,6 +71,7 @@ export default function App() {
   return (
     <>
       <Loader />
+      <SiteNotice />
       <ScrollProgress />
       <div className="grain" aria-hidden="true" />
       {route.name !== 'project' && <Nav />}

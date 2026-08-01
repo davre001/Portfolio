@@ -417,6 +417,60 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.06; letter-spacing
   margin-inline: 0; text-align: center;
   border-top: 1px solid var(--border); padding-top: var(--space-10);
 }
+/* ---------- Site notice (in-development banner) ---------- */
+.notice {
+  position: fixed;
+  top: var(--space-4);
+  left: 50%;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: max-content;
+  max-width: min(560px, calc(100vw - 2 * var(--gutter)));
+  padding: 0.7rem 1.1rem;
+  border: 1px solid rgba(255, 59, 48, 0.35);
+  border-radius: var(--radius-full, 999px);
+  background: rgba(10, 10, 11, 0.82);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  transform: translate(-50%, -140%);
+  transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease);
+}
+.notice--in {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.notice__dot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ff3b30;
+  box-shadow: 0 0 10px rgba(255, 59, 48, 0.8);
+  animation: cs-blink 1.2s steps(1) infinite;
+}
+.notice__text {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: 300;
+  line-height: 1.45;
+  color: var(--color-text);
+}
+@media (max-width: 720px) {
+  .notice {
+    padding: 0.6rem 0.9rem;
+    font-size: var(--fs-xs);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .notice { transition: opacity var(--dur) var(--ease); transform: translate(-50%, 0); }
+  .notice__dot { animation: none; }
+}
+
 /* ---------- Loader (ASCII splash) ---------- */
 .loader {
   position: fixed;
@@ -622,7 +676,7 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.06; letter-spacing
   transition: opacity var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
 }
 .detail__back:hover,
-.detail__back:focus-visible { opacity: 1; color: #22c55e; outline: none; }
+.detail__back:focus-visible { opacity: 1; color: #ff3b30; outline: none; }
 .detail__media {
   position: relative;
   aspect-ratio: 16 / 9;
@@ -676,10 +730,50 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.06; letter-spacing
 }
 .detail__role {
   margin: 0;
-  color: #22c55e;
+  color: #ff3b30;
   font-size: var(--fs-md);
   letter-spacing: 0.04em;
   text-align: right;
+}
+
+/* Meta / tags / description / Instagram CTA below the title row */
+.detail__body { margin-top: var(--space-6); }
+.detail__meta {
+  display: flex; flex-wrap: wrap; gap: var(--space-6);
+  margin: 0; padding-top: var(--space-5);
+  border-top: 1px solid var(--border);
+}
+.detail__meta-item dt {
+  font-family: var(--font-display);
+  font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.detail__meta-item dd {
+  margin: 0.35rem 0 0;
+  font-size: var(--fs-md); color: var(--foreground);
+}
+.detail__tags {
+  display: flex; flex-wrap: wrap; gap: 0.5rem;
+  margin: var(--space-5) 0 0; padding: 0; list-style: none;
+}
+.detail__tag {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: transparent;
+  font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase;
+  color: #ff3b30;
+}
+.detail__desc {
+  margin: var(--space-5) 0 0;
+  max-width: 62ch;
+  font-size: var(--fs-md); line-height: 1.7;
+  color: var(--muted-foreground);
+}
+.detail__ig {
+  margin-top: var(--space-6);
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  text-decoration: none;
 }
 .detail__missing {
   font-family: var(--font-display);

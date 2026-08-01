@@ -8,23 +8,28 @@
     "role": "3D Motion Graphics",
     "client": "DAVRE Studio",
     "year": 2026,
-    "tools": [
-      "Premiere Pro",
-      "DaVinci Resolve"
+    "tags": [
+      "3D",
+      "Motion Graphics",
+      "Product Ad"
     ],
+    "description": "A kinetic product spot built around a single hero silhouette — camera moves, type and light all cut to the beat.",
     "video": "/assets/videos/motion-graphics/NIKE.mp4"
   },
   {
     "id": "the-wanderer",
     "title": "Nescafe",
+    "logo": "/assets/images/brands/nescafe.png",
     "category": "video-editing",
     "role": "3D Motion Graphics",
     "client": "Personal",
     "year": 2026,
-    "tools": [
-      "Premiere Pro",
-      "After Effects"
+    "tags": [
+      "3D",
+      "Motion Graphics",
+      "Beverage"
     ],
+    "description": "Warm, tactile coffee visuals — steam, pour and grain rendered in 3D and graded for a morning mood.",
     "video": "/assets/videos/motion-graphics/NESCAFE.mp4"
   },
   {
@@ -34,10 +39,12 @@
     "role": "2D Motion graphics",
     "client": "Personal",
     "year": 2025,
-    "tools": [
-      "Final Cut",
-      "Audition"
+    "tags": [
+      "2D",
+      "Motion Graphics",
+      "Brand Identity"
     ],
+    "description": "Flat-graphic delivery story told in bold brand colour, with snappy transitions carrying the eye between scenes.",
     "video": "/assets/videos/motion-graphics/GLOVO.mp4"
   },
   {
@@ -47,10 +54,12 @@
     "role": "Fashion Video",
     "client": "DAVRE Studio",
     "year": 2026,
-    "tools": [
-      "After Effects",
-      "Cinema 4D"
+    "tags": [
+      "Title Design",
+      "Motion Graphics",
+      "Fashion"
     ],
+    "description": "A title sequence treatment with heavy type, hard cuts and a dark, high-contrast grade.",
     "video": "/assets/videos/motion-graphics/final_2.mp4"
   },
   {
@@ -60,9 +69,12 @@
     "role": "Fashion Video",
     "client": "Auto Brand",
     "year": 2026,
-    "tools": [
-      "After Effects"
+    "tags": [
+      "Title Design",
+      "Motion Graphics",
+      "Fashion"
     ],
+    "description": "Short-form sting built for social — fast type reveals timed to the track, designed to read at thumbnail size.",
     "video": "/assets/videos/motion-graphics/BATCAVE%20-%20Trim.mp4"
   },
   {
@@ -72,10 +84,12 @@
     "role": "Creative Ad for UBER (Unofficial)",
     "client": "Personal",
     "year": 2025,
-    "tools": [
-      "Houdini",
-      "After Effects"
+    "tags": [
+      "Motion Graphics",
+      "Concept Ad",
+      "Simulation"
     ],
+    "description": "An unofficial concept spot — city movement abstracted into simulated motion and typographic rhythm.",
     "video": "/assets/videos/motion-graphics/UBER.mp4"
   },
   {
@@ -85,10 +99,12 @@
     "role": "AI Artist / Editor",
     "client": "DAVRE Studio",
     "year": 2026,
-    "tools": [
-      "Runway",
-      "Midjourney"
+    "tags": [
+      "AI",
+      "Generative",
+      "Experimental"
     ],
+    "description": "Generated frames stitched into a continuous drifting landscape, then edited and graded like live footage.",
     "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
   },
   {
@@ -98,10 +114,12 @@
     "role": "AI Artist",
     "client": "Personal",
     "year": 2026,
-    "tools": [
-      "ComfyUI",
-      "After Effects"
+    "tags": [
+      "AI",
+      "Generative",
+      "Compositing"
     ],
+    "description": "A generative sequence composited over practical plates, exploring where synthetic and shot imagery blur.",
     "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
   },
   {
@@ -111,10 +129,12 @@
     "role": "AI Artist / Editor",
     "client": "Personal",
     "year": 2025,
-    "tools": [
-      "Runway",
-      "DaVinci"
+    "tags": [
+      "AI",
+      "Generative",
+      "Colour"
     ],
+    "description": "A playful colour study — prompt-driven motion cut against a rhythmic edit and a saturated grade.",
     "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"
   }
 ]

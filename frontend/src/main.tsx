@@ -7,6 +7,7 @@ import '../css/main.css';
 import '../css/theme.css';
 import '../css/menu-preview.css';
 import '../css/tutorials.css';
+import '../css/outerspace.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

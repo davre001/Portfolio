@@ -1,0 +1,377 @@
+/* ===================================================================
+   /outerspace — warp-drive flight
+
+   A fixed WebGL starfield sits behind normal scrolling content. Scroll
+   velocity opens the throttle (see OuterSpace.tsx), so the visual speed
+   comes from the shader, not from CSS. Everything here is layout, type
+   and chrome; motion is limited to entrances and hover feedback.
+   =================================================================== */
+.osp {
+  position: relative;
+  background: var(--color-bg);
+  isolation: isolate;
+}
+
+/* ---------------- fixed starfield ---------------- */
+.osp__sky {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+/* react-three-fiber puts this class on its wrapper div, not the <canvas>. */
+.osp__canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+.osp__canvas canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+/* Vignette so text always has a base to sit on, whatever the stars do. */
+.osp__sky::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(72% 58% at 50% 45%, transparent 30%, rgba(10, 10, 11, 0.55) 78%, var(--color-bg) 100%),
+    linear-gradient(to bottom, rgba(10, 10, 11, 0.72), transparent 22%, transparent 74%, rgba(10, 10, 11, 0.86));
+}
+
+/* ---------------- flight HUD ---------------- */
+.osp__hud {
+  position: fixed;
+  right: var(--gutter);
+  bottom: var(--space-6);
+  z-index: 3;
+  width: 148px;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: rgba(10, 10, 11, 0.52);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  font-family: var(--font-display);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease);
+}
+.osp.is-booted .osp__hud {
+  opacity: 1;
+  transform: none;
+}
+.osp__hud-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.osp__hud-row--dim {
+  margin-top: var(--space-2);
+  opacity: 0.6;
+}
+.osp__hud-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-faint);
+}
+.osp__hud-value {
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+.osp__hud-bar {
+  position: relative;
+  height: 2px;
+  margin-top: var(--space-2);
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+.osp__hud-fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  transform: scaleX(0);
+  background: #ff3b30;
+  box-shadow: 0 0 12px rgba(255, 59, 48, 0.7);
+}
+
+/* ---------------- content flow ---------------- */
+.osp__flow {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ---------------- hero ---------------- */
+.osp__hero {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding-block: var(--space-16) var(--space-12);
+}
+.osp__eyebrow {
+  font-family: var(--font-display);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-faint);
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.7s var(--ease) 0.1s, transform 0.7s var(--ease) 0.1s;
+}
+.osp__title {
+  margin: var(--space-4) 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.28em;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(3rem, 12vw, 9rem);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+.osp__title span {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.9s var(--ease) 0.2s, transform 0.9s var(--ease) 0.2s;
+}
+.osp__title span + span {
+  transition-delay: 0.32s;
+}
+.osp__title-accent {
+  color: #ff3b30;
+}
+.osp__tagline {
+  margin: var(--space-5) 0 0;
+  max-width: 44ch;
+  font-family: var(--font-body);
+  font-size: var(--fs-lg);
+  font-weight: 300;
+  line-height: 1.6;
+  color: var(--color-muted);
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.8s var(--ease) 0.44s, transform 0.8s var(--ease) 0.44s;
+}
+.osp__scroll-cue {
+  margin-top: var(--space-10);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-display);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-faint);
+  opacity: 0;
+  transition: opacity 0.8s var(--ease) 0.6s;
+}
+.osp__scroll-cue-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ff3b30;
+  box-shadow: 0 0 10px rgba(255, 59, 48, 0.8);
+  animation: ospPulse 1.9s var(--ease) infinite;
+}
+@keyframes ospPulse {
+  0%, 100% { opacity: 0.35; transform: scale(0.8); }
+  50%      { opacity: 1;    transform: scale(1); }
+}
+
+.osp.is-booted .osp__eyebrow,
+.osp.is-booted .osp__title span,
+.osp.is-booted .osp__tagline,
+.osp.is-booted .osp__scroll-cue {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------------- chapters ---------------- */
+.osp__chapter,
+.osp__reel,
+.osp__contact {
+  padding-block: var(--section-y);
+  border-top: 1px solid var(--line);
+}
+.osp__marker {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #ff3b30;
+}
+.osp__chapter-title {
+  margin: var(--space-4) 0 0;
+  max-width: 20ch;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-2xl);
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+  color: var(--color-text);
+}
+.osp__chapter-body {
+  margin: var(--space-5) 0 0;
+  max-width: 62ch;
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+  font-weight: 300;
+  line-height: 1.75;
+  color: var(--color-muted);
+}
+
+/* ---------------- cargo manifest ---------------- */
+.osp__manifest {
+  margin: var(--space-8) 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+.osp__cargo {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-5) var(--space-3);
+  border-bottom: 1px solid var(--line);
+  text-decoration: none;
+  color: var(--color-text);
+  transition: background var(--dur) var(--ease), padding-left var(--dur) var(--ease);
+}
+.osp__cargo:hover,
+.osp__cargo:focus-visible {
+  background: rgba(255, 255, 255, 0.04);
+  padding-left: var(--space-5);
+  outline: none;
+}
+.osp__cargo:focus-visible {
+  box-shadow: inset 0 0 0 1px var(--line-accent);
+}
+.osp__cargo-index {
+  font-family: var(--font-display);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.1em;
+  color: var(--color-faint);
+  font-variant-numeric: tabular-nums;
+}
+.osp__cargo-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+.osp__cargo-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-lg);
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  transition: color var(--dur) var(--ease);
+}
+.osp__cargo:hover .osp__cargo-title,
+.osp__cargo:focus-visible .osp__cargo-title {
+  color: #ff3b30;
+}
+.osp__cargo-role {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: 300;
+  color: var(--color-muted);
+}
+.osp__cargo-year {
+  font-family: var(--font-display);
+  font-size: var(--fs-sm);
+  color: var(--color-faint);
+  font-variant-numeric: tabular-nums;
+}
+.osp__cargo-go {
+  font-size: var(--fs-lg);
+  color: var(--color-faint);
+  transform: translateX(-6px);
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease),
+    color var(--dur) var(--ease);
+}
+.osp__cargo:hover .osp__cargo-go,
+.osp__cargo:focus-visible .osp__cargo-go {
+  opacity: 1;
+  transform: none;
+  color: #ff3b30;
+}
+
+/* ---------------- contact ---------------- */
+.osp__contact {
+  padding-bottom: var(--space-16);
+}
+.osp__actions {
+  margin-top: var(--space-8);
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+.osp__cta {
+  text-decoration: none;
+}
+.osp__back {
+  font-family: var(--font-display);
+  font-size: var(--fs-sm);
+  letter-spacing: 0.04em;
+  color: var(--color-muted);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease);
+}
+.osp__back:hover,
+.osp__back:focus-visible {
+  color: #ff3b30;
+}
+
+/* ---------------- responsive ---------------- */
+@media (max-width: 720px) {
+  .osp__hud {
+    right: auto;
+    left: var(--gutter);
+    bottom: var(--space-4);
+    width: 124px;
+  }
+  .osp__cargo {
+    grid-template-columns: auto 1fr auto;
+    gap: var(--space-4);
+  }
+  /* The arrow is pure affordance; the row is still a link without it. */
+  .osp__cargo-go {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .osp__scroll-cue-dot {
+    animation: none;
+  }
+  .osp__eyebrow,
+  .osp__title span,
+  .osp__tagline,
+  .osp__scroll-cue,
+  .osp__hud {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

@@ -20,7 +20,7 @@ export default function ComingSoon({ title, tagline }: ComingSoonProps) {
         <p className="coming-soon__tagline">{tagline}</p>
         <span className="coming-soon__badge">
           <span className="coming-soon__badge-dot" aria-hidden="true" />
-          Coming soon
+          App Under Maintenance, Check Back Later
         </span>
         <AppLink to="/" className="btn btn--ghost coming-soon__back">
           ← Back to home

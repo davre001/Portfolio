@@ -7,8 +7,11 @@ export interface Project {
   role: string;
   client: string;
   year: number;
-  tools: string[];
   video: string;
+  tags?: string[];
+  description?: string;
+  /** Full Instagram post URL; falls back to the studio profile when absent. */
+  instagram?: string;
   logo?: string;
   /** Optional lighter source for the wall tile (detail page can use the heavier `video`). */
   wall?: string;
