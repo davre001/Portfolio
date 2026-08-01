@@ -1,211 +1,374 @@
 /* ===================================================================
-   /tutorials — "coming soon" page
+   /tutorials — glassy "coming soon" waitlist page
 
-   A full-bleed looping video plays behind a film-grain overlay; a single
-   premium serif line sits centered over a readability scrim. The Davre nav
-   logo routes home.
+   Pure black canvas, a single soft warm aurora smear behind the card,
+   a frosted glass panel, and an oversized reflected "Waitlist" wordmark
+   bleeding off the bottom edge.
    =================================================================== */
-.tutorials {
-  --tut-accent: #ff3b30;
+.tut {
+  position: relative;
   min-height: 100vh;
   min-height: 100dvh;
-  display: grid;
-  place-items: center;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
+  background: #000;
+  padding: 8rem 1.25rem 0;
+  isolation: isolate;
 }
 
-/* ---------------- full-bleed video + grain ---------------- */
-.tutorials__media {
+/* ---------------- ambient video backdrop ---------------- */
+.tut__bg {
   position: absolute;
   inset: 0;
+  pointer-events: none;
   z-index: 0;
   overflow: hidden;
 }
-.tutorials__video {
+.tut__video {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  filter: brightness(0.52) saturate(108%);
 }
-/* darken + focus the video so the text reads cleanly */
-.tutorials__media::after {
+/* fade the footage out toward the page edges so it sits on true black */
+.tut__bg::after {
   content: '';
   position: absolute;
   inset: 0;
-  pointer-events: none;
   background:
-    radial-gradient(60% 55% at 50% 52%, rgba(10, 10, 11, 0.72), rgba(10, 10, 11, 0.42) 60%, rgba(10, 10, 11, 0.72) 100%),
-    linear-gradient(to bottom, rgba(10, 10, 11, 0.55), rgba(10, 10, 11, 0.2) 30%, rgba(10, 10, 11, 0.2) 70%, rgba(10, 10, 11, 0.6));
+    radial-gradient(78% 62% at 50% 54%, rgba(0, 0, 0, 0.25) 24%, rgba(0, 0, 0, 0.68) 72%, #000 100%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.28) 30%, rgba(0, 0, 0, 0.28) 66%, #000 98%);
 }
 
-/* ---------------- centered content ---------------- */
-.tutorials__inner {
+/* ---------------- centered stack ---------------- */
+.tut__inner {
   position: relative;
-  z-index: 1;
-  text-align: center;
-  padding-block: var(--space-6);
-  max-width: 600px;
-  margin-inline: auto;
+  z-index: 2;
+  width: 100%;
+  max-width: 620px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-}
-.tutorials__tagline {
-  margin: 0 0 2.4rem;
-  font-family: var(--font-about, "Cormorant Garamond", Georgia, serif);
-  font-weight: 500;
-  font-size: clamp(2.2rem, 6vw, 4.6rem);
-  line-height: 1.05;
-  letter-spacing: 0.01em;
-  color: var(--color-text, #f4f4f2);
-  text-shadow: 0 2px 40px rgba(0, 0, 0, 0.6);
-  white-space: nowrap;
-}
-.tutorials__tagline-em {
-  font-style: italic;
-  font-weight: 500;
-  color: var(--tut-accent);
-  text-shadow: 0 0 30px rgba(255, 59, 48, 0.4);
+  text-align: center;
 }
 
-/* ---------------- waitlist form ---------------- */
-.tutorials__waitlist {
-  margin-top: 3rem;
-}
-.tutorials__waitlist-box {
-  position: relative;
-  max-width: 420px;
-  margin: 0 auto 1rem;
-  background: rgba(244, 244, 242, 0.95);
-  border: 1px solid rgba(244, 244, 242, 0.3);
-  border-radius: 48px;
-  padding: 0.4rem;
-  padding-right: 0.4rem;
-  backdrop-filter: blur(12px);
-  display: flex;
+.tut__badge {
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  transition: all 0.24s ease;
+  padding: 0.4rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.86);
 }
-.tutorials__waitlist-box:focus-within {
-  border-color: rgba(244, 244, 242, 0.5);
-  background: rgba(244, 244, 242, 1);
-  box-shadow: 0 0 0 3px rgba(244, 244, 242, 0.2);
+.tut__badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
 }
-.tutorials__waitlist-input {
-  flex: 1;
-  padding: 0.9rem 1.6rem;
-  font-size: 1rem;
-  font-weight: 400;
-  color: #0a0a0b;
+
+.tut__title {
+  margin: 1.6rem 0 2.2rem;
+  width: 100%;
+  color: #fff;
+  text-shadow: 0 4px 60px rgba(255, 255, 255, 0.22);
+}
+
+/* ---------------- TextPressure headline ----------------
+   Styles are scoped to .text-pressure — the upstream React Bits component
+   injects a bare `.flex` rule, which would collide with Tailwind's utility. */
+.text-pressure {
+  position: relative;
+  width: 100%;
   background: transparent;
-  border: none;
+}
+.text-pressure-title {
+  margin: 0;
+  width: 100%;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+  user-select: none;
+  font-weight: 100;
+  letter-spacing: -0.01em;
+  transform-origin: center top;
+}
+.text-pressure--flex {
+  display: flex;
+  justify-content: space-between;
+}
+.text-pressure-title span {
+  display: inline-block;
+}
+.text-pressure--stroke span {
+  position: relative;
+}
+.text-pressure--stroke span::after {
+  content: attr(data-char);
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: transparent;
+  z-index: -1;
+  -webkit-text-stroke-width: 3px;
+  -webkit-text-stroke-color: var(--tp-stroke-color, #ff3b30);
+}
+
+/* ---------------- glass card ---------------- */
+.tut__card {
+  width: 100%;
+  padding: 2.4rem 2rem;
+  border-radius: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(
+    160deg,
+    rgba(12, 11, 17, 0.86),
+    rgba(9, 8, 13, 0.8) 45%,
+    rgba(12, 11, 17, 0.85)
+  );
+  backdrop-filter: blur(28px) saturate(130%);
+  -webkit-backdrop-filter: blur(28px) saturate(130%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 24px 70px rgba(0, 0, 0, 0.55);
+}
+
+.tut__card-title {
+  margin: 0 0 0.7rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.35rem, 3.4vw, 1.8rem);
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+.tut__card-sub {
+  margin: 0 auto 1.7rem;
+  max-width: 34ch;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 300;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+/* ---------------- form ---------------- */
+.tut__form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+.tut__input {
+  flex: 1 1 200px;
+  max-width: 260px;
+  padding: 0.85rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: #fff;
   outline: none;
-  border-radius: 48px;
+  transition: border-color 0.24s ease, background 0.24s ease, box-shadow 0.24s ease;
 }
-.tutorials__waitlist-input::placeholder {
-  color: rgba(10, 10, 11, 0.4);
+.tut__input::placeholder {
+  color: rgba(255, 255, 255, 0.42);
 }
-.tutorials__waitlist-input:-webkit-autofill,
-.tutorials__waitlist-input:-webkit-autofill:hover,
-.tutorials__waitlist-input:-webkit-autofill:focus,
-.tutorials__waitlist-input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 1000px rgba(244, 244, 242, 0.95) inset !important;
-  -webkit-text-fill-color: #0a0a0b !important;
+.tut__input:focus {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.11);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+}
+.tut__input:-webkit-autofill,
+.tut__input:-webkit-autofill:hover,
+.tut__input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #14140f inset !important;
+  -webkit-text-fill-color: #fff !important;
   transition: background-color 5000s ease-in-out 0s;
 }
-.tutorials__waitlist-btn {
-  width: 56px;
-  height: 56px;
-  padding: 0;
-  display: grid;
-  place-items: center;
-  background: #0a0a0b;
-  border: 1px solid #0a0a0b;
-  border-radius: 50%;
+
+.tut__submit {
+  min-width: 130px;
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  border: 1px solid #ff3b30;
+  background: #ff3b30;
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
-  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.24s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.24s ease,
+    background 0.24s ease;
 }
-.tutorials__waitlist-btn:hover,
-.tutorials__waitlist-btn:focus-visible {
-  background: #1a1a1b;
-  border-color: #1a1a1b;
-  transform: scale(1.08);
-  box-shadow: 0 4px 24px rgba(10, 10, 11, 0.4);
+.tut__submit:hover:not(:disabled),
+.tut__submit:focus-visible {
+  background: #ff5347;
+  border-color: #ff5347;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 28px rgba(255, 59, 48, 0.42);
 }
-.tutorials__waitlist-arrow {
-  width: 22px;
-  height: 22px;
-  color: #f4f4f2;
-  transition: transform 0.3s ease;
-}
-.tutorials__waitlist-btn:hover .tutorials__waitlist-arrow {
-  transform: translateX(2px);
-}
-.tutorials__waitlist-btn:disabled {
+.tut__submit:disabled {
   cursor: wait;
-  opacity: 0.7;
+  opacity: 0.75;
 }
-.tutorials__waitlist-spinner {
-  width: 20px;
-  height: 20px;
-  border: 2px solid rgba(244, 244, 242, 0.25);
-  border-top-color: #f4f4f2;
+.tut__spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
   border-radius: 50%;
-  animation: waitlistSpin 0.7s linear infinite;
+  animation: tutSpin 0.7s linear infinite;
 }
-@keyframes waitlistSpin {
+@keyframes tutSpin {
   to {
     transform: rotate(360deg);
   }
 }
-.tutorials__waitlist-error {
-  margin: 0 0 0.6rem;
-  font-size: 0.88rem;
-  font-weight: 400;
-  line-height: 1.5;
+
+.tut__error {
+  margin: 1rem 0 0;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
   color: #ffb4ae;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
-}
-.tutorials__waitlist-helper {
-  margin: 0;
-  font-size: 0.88rem;
-  font-weight: 300;
-  line-height: 1.5;
-  color: rgba(244, 244, 242, 0.6);
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
 }
 
-/* ---------------- success state ---------------- */
-.tutorials__waitlist-success-wrapper {
-  margin-top: 3rem;
-  width: 100%;
-  max-width: 520px;
-  animation: successFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+/* ---------------- success ---------------- */
+.tut__success {
+  animation: tutFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-@keyframes successFadeIn {
-  0% {
+@keyframes tutFadeIn {
+  from {
     opacity: 0;
-    transform: scale(0.95) translateY(10px);
+    transform: translateY(10px) scale(0.97);
   }
-  100% {
+  to {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: none;
   }
 }
-.tutorials__waitlist-success-alert {
-  backdrop-filter: blur(16px);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+.tut__success-icon {
+  width: 34px;
+  height: 34px;
+  margin: 0 auto 1rem;
+  display: block;
+  color: #fff;
+  opacity: 0.9;
+}
+.tut__success .tut__card-sub {
+  margin-bottom: 0;
 }
 
-/* ---------------- responsive adjustments ---------------- */
+/* ---------------- socials ---------------- */
+.tut__socials {
+  margin-top: 1.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.tut__social {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: rgba(255, 255, 255, 0.78);
+  transition: color 0.22s ease, background 0.22s ease, transform 0.22s ease;
+}
+.tut__social svg {
+  width: 15px;
+  height: 15px;
+}
+.tut__social:hover,
+.tut__social:focus-visible {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+  transform: translateY(-2px);
+}
+
+/* ---------------- oversized bottom wordmark ---------------- */
+.tut__wordmark {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+  width: 100%;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(5rem, 21vw, 16rem);
+  line-height: 0.82;
+  letter-spacing: -0.045em;
+  user-select: none;
+  pointer-events: none;
+  /* glassy reflection: near-invisible fill with a bright top edge */
+  color: transparent;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0.07) 38%,
+    rgba(255, 255, 255, 0.015) 72%,
+    transparent
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  transform: translateY(26%);
+}
+
+.tut__footnote {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  padding: 1.4rem 0 1.6rem;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.34);
+}
+
 @media (max-width: 600px) {
-  .tutorials__waitlist-box {
+  .tut {
+    padding-top: 6.5rem;
+  }
+  .tut__card {
+    padding: 1.9rem 1.25rem;
+  }
+  .tut__input {
     max-width: 100%;
+    flex-basis: 100%;
+  }
+  .tut__submit {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tut__video {
+    display: none;
   }
 }
