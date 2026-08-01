@@ -417,31 +417,41 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.06; letter-spacing
   margin-inline: 0; text-align: center;
   border-top: 1px solid var(--border); padding-top: var(--space-10);
 }
-/* ---------- Site notice (in-development banner) ---------- */
+/* ---------- Site notice (in-development banner) ----------
+   Apple-style glass capsule. Positioned with auto margins rather than
+   left:50% + translateX so the slide transform only touches Y — a single
+   axis animates cleanly and the exit mirrors the entrance exactly. */
 .notice {
   position: fixed;
-  top: var(--space-4);
-  left: 50%;
+  top: max(var(--space-4), env(safe-area-inset-top, 0px));
+  inset-inline: 0;
+  margin-inline: auto;
   z-index: 9998;
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: 0.65rem;
   width: max-content;
-  max-width: min(560px, calc(100vw - 2 * var(--gutter)));
-  padding: 0.7rem 1.1rem;
-  border: 1px solid rgba(255, 59, 48, 0.35);
-  border-radius: var(--radius-full, 999px);
-  background: rgba(10, 10, 11, 0.82);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.45);
+  max-width: min(620px, calc(100vw - 2 * var(--gutter)));
+  padding: 0.72rem 1.15rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 18px;
+  background: rgba(28, 28, 30, 0.62);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.09) inset,
+    0 12px 40px rgba(0, 0, 0, 0.5),
+    0 2px 8px rgba(0, 0, 0, 0.3);
   opacity: 0;
-  transform: translate(-50%, -140%);
-  transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease);
+  transform: translateY(calc(-100% - var(--space-6)));
+  /* Gentle overshoot on the way in; plain ease on the way out. */
+  transition:
+    transform 0.62s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.42s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .notice--in {
   opacity: 1;
-  transform: translate(-50%, 0);
+  transform: translateY(0);
 }
 .notice__dot {
   flex: none;
@@ -449,26 +459,31 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.06; letter-spacing
   height: 7px;
   border-radius: 50%;
   background: #ff3b30;
-  box-shadow: 0 0 10px rgba(255, 59, 48, 0.8);
-  animation: cs-blink 1.2s steps(1) infinite;
+  box-shadow: 0 0 8px rgba(255, 59, 48, 0.75);
 }
 .notice__text {
   margin: 0;
   font-family: var(--font-body);
-  font-size: var(--fs-sm);
-  font-weight: 300;
-  line-height: 1.45;
-  color: var(--color-text);
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.005em;
+  color: rgba(255, 255, 255, 0.92);
 }
 @media (max-width: 720px) {
   .notice {
-    padding: 0.6rem 0.9rem;
-    font-size: var(--fs-xs);
+    padding: 0.62rem 0.95rem;
+    border-radius: 16px;
+  }
+  .notice__text {
+    font-size: 0.82rem;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .notice { transition: opacity var(--dur) var(--ease); transform: translate(-50%, 0); }
-  .notice__dot { animation: none; }
+  .notice {
+    transform: translateY(0);
+    transition: opacity 0.3s linear;
+  }
 }
 
 /* ---------- Loader (ASCII splash) ---------- */
@@ -782,96 +797,27 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.06; letter-spacing
   margin: 0 0 var(--space-6);
 }
 
+
 /* ===================================================================
-   Coming-soon standalone pages (/outerspace, /ai-studio, /tutorials)
+   Maintenance screen (/outerspace, /ai-studio)
+   Black field, one line of text, nothing else.
    =================================================================== */
-.coming-soon {
-  --cs-accent: #ff3b30;
+.maintenance {
   min-height: 100vh;
   min-height: 100dvh;
   display: grid;
   place-items: center;
-  position: relative;
-  overflow: hidden;
-  background:
-    radial-gradient(120% 90% at 50% 0%, rgba(255, 59, 48, 0.08) 0%, transparent 55%),
-    var(--color-bg, #0a0a0b);
+  padding: var(--space-8) var(--gutter);
+  background: #000;
 }
-.coming-soon::after {
-  /* soft scanline texture, matching the menu monitor's cinematic feel */
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: repeating-linear-gradient(
-    0deg, rgba(255, 255, 255, 0.02) 0px, rgba(255, 255, 255, 0.02) 1px, transparent 1px, transparent 3px
-  );
-}
-.coming-soon__inner {
-  position: relative;
-  z-index: 1;
+.maintenance__msg {
+  margin: 0;
+  max-width: 30ch;
   text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-4);
-  padding-block: var(--section-y);
-}
-.coming-soon__eyebrow {
-  font-family: var(--font-display, sans-serif);
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  color: var(--color-muted, #9a9aa1);
-}
-.coming-soon__title {
-  margin: 0;
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: var(--fs-3xl);
-  line-height: 1.0;
-  letter-spacing: -0.03em;
-  text-transform: uppercase;
-  color: var(--color-text, #f4f4f2);
-}
-.coming-soon__tagline {
-  margin: 0;
-  max-width: 46ch;
   font-size: var(--fs-lg);
-  line-height: 1.6;
-  color: var(--color-muted, #9a9aa1);
-}
-.coming-soon__badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: var(--space-2);
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius-full, 999px);
-  border: 1px solid rgba(255, 59, 48, 0.4);
-  font-family: var(--font-display, sans-serif);
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--cs-accent);
-}
-.coming-soon__badge-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--cs-accent);
-  box-shadow: 0 0 8px var(--cs-accent);
-  animation: cs-blink 1.2s steps(1) infinite;
-}
-@keyframes cs-blink {
-  0%, 49% { opacity: 1; }
-  50%, 100% { opacity: 0.2; }
-}
-.coming-soon__back {
-  margin-top: var(--space-5);
-}
-@media (prefers-reduced-motion: reduce) {
-  .coming-soon__badge-dot { animation: none; }
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  color: var(--color-text, #f4f4f2);
 }

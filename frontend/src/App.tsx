@@ -21,13 +21,6 @@ type Route =
 // used as the router basename so paths resolve identically in dev and prod.
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, ''); // '' for '/'
 
-// Content for the standalone "coming soon" pages, keyed by URL slug.
-const PAGES: Record<'outerspace' | 'ai-studio' | 'tutorials', { title: string; tagline: string }> = {
-  outerspace: { title: 'Outerspace', tagline: 'Worlds beyond the frame — cinematic space experiences in the making.' },
-  'ai-studio': { title: 'AI Studio', tagline: 'Frames born from code — where generative craft meets the cutting room.' },
-  tutorials: { title: 'Tutorials', tagline: 'Learn the craft — breakdowns, techniques and behind-the-scenes, on the way.' },
-};
-
 /** Strip the hosting base prefix and normalise to a leading-slash path. */
 export function currentPath(): string {
   let p = window.location.pathname;
@@ -83,7 +76,7 @@ export default function App() {
           route.slug === 'tutorials' ? (
             <Tutorials />
           ) : (
-            <ComingSoon title={PAGES[route.slug].title} tagline={PAGES[route.slug].tagline} />
+            <ComingSoon />
           )
         ) : (
           <>
